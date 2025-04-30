@@ -1,0 +1,24 @@
+[2025-04-11 14:25:05,058][__main__][INFO] - [rank: 0] Instantiating datamodule <gotennet.data.components.rdb7.RDB7DataModule>
+[2025-04-11 14:25:05,061][__main__][INFO] - [rank: 0] Instantiating model <flow_matching.flow_module.FlowModule>
+[2025-04-11 14:25:05,063][gotennet.models.representation.gotennet][INFO] - [rank: 0] Using xavier_uniform weight initialization
+[2025-04-11 14:25:05,717][__main__][INFO] - [rank: 0] Instantiating callbacks...
+[2025-04-11 14:25:05,718][gotennet.utils.instantiators][INFO] - [rank: 0] Instantiating callback <lightning.pytorch.callbacks.ModelCheckpoint>
+[2025-04-11 14:25:05,720][gotennet.utils.instantiators][INFO] - [rank: 0] Instantiating callback <lightning.pytorch.callbacks.EarlyStopping>
+[2025-04-11 14:25:05,721][gotennet.utils.instantiators][INFO] - [rank: 0] Instantiating callback <lightning.pytorch.callbacks.RichModelSummary>
+[2025-04-11 14:25:05,722][gotennet.utils.instantiators][INFO] - [rank: 0] Instantiating callback <lightning.pytorch.callbacks.RichProgressBar>
+[2025-04-11 14:25:05,722][gotennet.utils.instantiators][INFO] - [rank: 0] Instantiating callback <gotennet.models.components.callbacks.EMALossCallback>
+[2025-04-11 14:25:05,723][gotennet.utils.instantiators][INFO] - [rank: 0] Instantiating callback <gotennet.models.components.callbacks.TestAndSaveResultsAfterTrainingCallback>
+[2025-04-11 14:25:05,724][__main__][INFO] - [rank: 0] Instantiating loggers...
+[2025-04-11 14:25:05,724][gotennet.utils.instantiators][INFO] - [rank: 0] Instantiating logger <lightning.pytorch.loggers.WandbLogger>
+[2025-04-11 14:25:05,725][__main__][INFO] - [rank: 0] Instantiating trainer <lightning.pytorch.trainer.Trainer>
+[2025-04-11 14:25:05,730][pytorch_lightning.utilities.rank_zero][INFO] - Trainer already configured with model summary callbacks: [<class 'lightning.pytorch.callbacks.rich_model_summary.RichModelSummary'>]. Skipping setting a default `ModelSummary` callback.
+[2025-04-11 14:25:05,737][pytorch_lightning.utilities.rank_zero][INFO] - GPU available: True (cuda), used: True
+[2025-04-11 14:25:05,738][pytorch_lightning.utilities.rank_zero][INFO] - TPU available: False, using: 0 TPU cores
+[2025-04-11 14:25:05,738][pytorch_lightning.utilities.rank_zero][INFO] - HPU available: False, using: 0 HPUs
+[2025-04-11 14:25:05,738][__main__][INFO] - [rank: 0] Logging hyperparameters!
+[2025-04-11 14:25:05,741][__main__][INFO] - [rank: 0] Starting training!
+[2025-04-11 15:14:05,080][__main__][INFO] - [rank: 0] Starting testing!
+[2025-04-11 15:14:05,783][pytorch_lightning.utilities.rank_zero][INFO] - Restoring states from the checkpoint path at /home/leonard.galustian/projects/fm-gotennet/logs/train_test_all_model_sizes/multiruns/2025-04-11_11-32-33/4/checkpoints/epoch_178.ckpt
+[2025-04-11 15:14:05,947][gotennet.models.components.callbacks][INFO] - [rank: 0] EMA loss loaded
+[2025-04-11 15:14:06,090][pytorch_lightning.utilities.rank_zero][INFO] - Loaded model weights from the checkpoint at /home/leonard.galustian/projects/fm-gotennet/logs/train_test_all_model_sizes/multiruns/2025-04-11_11-32-33/4/checkpoints/epoch_178.ckpt
+[2025-04-11 15:22:57,292][__main__][INFO] - [rank: 0] Best ckpt path: /home/leonard.galustian/projects/fm-gotennet/logs/train_test_all_model_sizes/multiruns/2025-04-11_11-32-33/4/checkpoints/epoch_178.ckpt

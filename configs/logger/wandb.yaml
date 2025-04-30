@@ -1,0 +1,4 @@
+wandb:
+  _target_: lightning.pytorch.loggers.WandbLogger
+  project: ${project}
+  name: ${task_name}

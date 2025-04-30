@@ -1,0 +1,9 @@
+2025-04-10 09:33:51 [INFO] Starting reaction type identification script.
+2025-04-10 09:33:51 [INFO] Reading input CSV: data/RDB7/raw_data/rxn_core_classified.csv
+2025-04-10 09:33:51 [INFO] Loaded 11926 rows.
+2025-04-10 09:33:51 [INFO] Grouping reactions by column: 'reaction_template'
+2025-04-10 09:33:52 [INFO] Encountered 3418 unique reaction types.
+2025-04-10 09:33:52 [INFO] Writing output CSV to data/RDB7/raw_data/reaction_types.csv
+2025-04-10 09:33:52 [INFO] Reaction type identification complete.
+2025-04-10 09:33:52 [INFO] 
+Done!

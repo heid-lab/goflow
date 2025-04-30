@@ -1,0 +1,407 @@
+[2025-04-11 11:48:05,181::train::INFO] Namespace(config='./configs/train_config_v2.yml', split_file='data/RDB7/splits/barrier_split.pkl', device='cuda', resume_iter=None, logdir='./logs/trained_rdb7/', pretrain='', project='tsdiff-rdb7', name='goflow-train-split-barrier_split', tag='goflow-train-split-barrier_split', fn=None)
+[2025-04-11 11:48:05,181::train::INFO] {'model': {'type': 'diffusion', 'network': 'condensenc_rtsp', 'output_mode': 'ts', 't0': 0, 't1': 5000, 'edge_cutoff': 10.0, 'edge_order': 4, 'pred_edge_order': 3, 'encoder': {'name': 'schnet', 'edge_emb': False, 'num_convs': 7, 'cutoff': 10.0, 'smooth_conv': False, 'mlp_act': 'swish', 'hidden_dim': 256}, 'feat_dim': 27, 'hidden_dim': 256, 'edge_encoder': 'mlp', 'loss_energy_weight': 0.4, 'mlp_act': 'swish', 'edge_cat_act': 'swish', 'beta_schedule': 'sigmoid', 'beta_start': 1e-07, 'beta_end': 0.002, 'num_diffusion_timesteps': 5000}, 'train': {'seed': 1, 'batch_size': 128, 'val_freq': 200, 'log_freq': 200, 'max_iters': 40000, 'max_grad_norm': 3000.0, 'anneal_power': 2.0, 'optimizer': {'type': 'adam', 'lr': 0.0005, 'weight_decay': 0.0, 'beta1': 0.95, 'beta2': 0.999}, 'scheduler': {'type': 'plateau', 'factor': 0.8, 'patience': 10, 'min_lr': 0.000125}}, 'dataset': {'data': 'data/RDB7/processed_data/data.pkl'}}
+[2025-04-11 11:48:06,450::train::INFO] Loading datasets...
+[2025-04-11 11:48:33,437::train::INFO] Building model...
+[2025-04-11 11:48:33,548::train::INFO] Total number of learnable parameters: 2770819
+[2025-04-11 11:48:34,539::train::INFO] [Train] Iter 00001 | Loss 637.31 | Grad 3.52 | LR 0.000500
+[2025-04-11 11:48:35,145::train::INFO] [Validate] Iter 00001 | Loss 560.871710 
+[2025-04-11 11:48:49,753::train::INFO] [Train] Iter 00201 | Loss 158.09 | Grad 704.75 | LR 0.000500
+[2025-04-11 11:48:50,392::train::INFO] [Validate] Iter 00201 | Loss 100.765474 
+[2025-04-11 11:49:05,323::train::INFO] [Train] Iter 00401 | Loss 102.16 | Grad 628.11 | LR 0.000500
+[2025-04-11 11:49:05,942::train::INFO] [Validate] Iter 00401 | Loss 90.622853 
+[2025-04-11 11:49:20,378::train::INFO] [Train] Iter 00601 | Loss 83.13 | Grad 511.14 | LR 0.000500
+[2025-04-11 11:49:20,992::train::INFO] [Validate] Iter 00601 | Loss 81.237897 
+[2025-04-11 11:49:35,767::train::INFO] [Train] Iter 00801 | Loss 76.20 | Grad 563.37 | LR 0.000500
+[2025-04-11 11:49:36,379::train::INFO] [Validate] Iter 00801 | Loss 81.929534 
+[2025-04-11 11:49:50,836::train::INFO] [Train] Iter 01001 | Loss 71.21 | Grad 508.66 | LR 0.000500
+[2025-04-11 11:49:51,454::train::INFO] [Validate] Iter 01001 | Loss 70.384053 
+[2025-04-11 11:50:06,194::train::INFO] [Train] Iter 01201 | Loss 69.01 | Grad 576.30 | LR 0.000500
+[2025-04-11 11:50:06,807::train::INFO] [Validate] Iter 01201 | Loss 68.787158 
+[2025-04-11 11:50:21,198::train::INFO] [Train] Iter 01401 | Loss 65.38 | Grad 523.90 | LR 0.000500
+[2025-04-11 11:50:21,807::train::INFO] [Validate] Iter 01401 | Loss 68.662487 
+[2025-04-11 11:50:36,533::train::INFO] [Train] Iter 01601 | Loss 63.37 | Grad 509.16 | LR 0.000500
+[2025-04-11 11:50:37,139::train::INFO] [Validate] Iter 01601 | Loss 61.638635 
+[2025-04-11 11:50:51,524::train::INFO] [Train] Iter 01801 | Loss 61.51 | Grad 525.12 | LR 0.000500
+[2025-04-11 11:50:52,133::train::INFO] [Validate] Iter 01801 | Loss 67.705699 
+[2025-04-11 11:51:06,848::train::INFO] [Train] Iter 02001 | Loss 61.65 | Grad 529.62 | LR 0.000500
+[2025-04-11 11:51:07,457::train::INFO] [Validate] Iter 02001 | Loss 57.672903 
+[2025-04-11 11:51:21,824::train::INFO] [Train] Iter 02201 | Loss 60.00 | Grad 514.35 | LR 0.000500
+[2025-04-11 11:51:22,435::train::INFO] [Validate] Iter 02201 | Loss 55.871077 
+[2025-04-11 11:51:37,186::train::INFO] [Train] Iter 02401 | Loss 58.66 | Grad 489.22 | LR 0.000500
+[2025-04-11 11:51:37,798::train::INFO] [Validate] Iter 02401 | Loss 59.465544 
+[2025-04-11 11:51:52,137::train::INFO] [Train] Iter 02601 | Loss 56.74 | Grad 438.39 | LR 0.000500
+[2025-04-11 11:51:52,757::train::INFO] [Validate] Iter 02601 | Loss 58.346595 
+[2025-04-11 11:52:07,417::train::INFO] [Train] Iter 02801 | Loss 56.55 | Grad 477.88 | LR 0.000500
+[2025-04-11 11:52:08,031::train::INFO] [Validate] Iter 02801 | Loss 56.046654 
+[2025-04-11 11:52:22,415::train::INFO] [Train] Iter 03001 | Loss 57.72 | Grad 515.15 | LR 0.000500
+[2025-04-11 11:52:23,038::train::INFO] [Validate] Iter 03001 | Loss 58.098727 
+[2025-04-11 11:52:37,729::train::INFO] [Train] Iter 03201 | Loss 57.75 | Grad 579.70 | LR 0.000500
+[2025-04-11 11:52:38,348::train::INFO] [Validate] Iter 03201 | Loss 53.873594 
+[2025-04-11 11:52:52,852::train::INFO] [Train] Iter 03401 | Loss 54.49 | Grad 467.24 | LR 0.000500
+[2025-04-11 11:52:53,463::train::INFO] [Validate] Iter 03401 | Loss 54.062638 
+[2025-04-11 11:53:08,239::train::INFO] [Train] Iter 03601 | Loss 54.26 | Grad 500.58 | LR 0.000500
+[2025-04-11 11:53:08,855::train::INFO] [Validate] Iter 03601 | Loss 56.878359 
+[2025-04-11 11:53:23,143::train::INFO] [Train] Iter 03801 | Loss 52.89 | Grad 434.06 | LR 0.000500
+[2025-04-11 11:53:24,129::train::INFO] [Validate] Iter 03801 | Loss 50.150970 
+[2025-04-11 11:53:38,491::train::INFO] [Train] Iter 04001 | Loss 51.92 | Grad 441.64 | LR 0.000500
+[2025-04-11 11:53:39,111::train::INFO] [Validate] Iter 04001 | Loss 60.134002 
+[2025-04-11 11:53:53,786::train::INFO] [Train] Iter 04201 | Loss 53.40 | Grad 510.98 | LR 0.000500
+[2025-04-11 11:53:54,398::train::INFO] [Validate] Iter 04201 | Loss 54.510292 
+[2025-04-11 11:54:08,678::train::INFO] [Train] Iter 04401 | Loss 53.37 | Grad 470.91 | LR 0.000500
+[2025-04-11 11:54:09,299::train::INFO] [Validate] Iter 04401 | Loss 52.944238 
+[2025-04-11 11:54:23,852::train::INFO] [Train] Iter 04601 | Loss 50.50 | Grad 441.70 | LR 0.000500
+[2025-04-11 11:54:24,470::train::INFO] [Validate] Iter 04601 | Loss 54.961151 
+[2025-04-11 11:54:38,659::train::INFO] [Train] Iter 04801 | Loss 52.32 | Grad 491.06 | LR 0.000500
+[2025-04-11 11:54:39,268::train::INFO] [Validate] Iter 04801 | Loss 54.235896 
+[2025-04-11 11:54:53,839::train::INFO] [Train] Iter 05001 | Loss 49.48 | Grad 401.78 | LR 0.000500
+[2025-04-11 11:54:54,450::train::INFO] [Validate] Iter 05001 | Loss 48.008427 
+[2025-04-11 11:55:08,720::train::INFO] [Train] Iter 05201 | Loss 49.17 | Grad 429.88 | LR 0.000500
+[2025-04-11 11:55:09,340::train::INFO] [Validate] Iter 05201 | Loss 52.162004 
+[2025-04-11 11:55:24,008::train::INFO] [Train] Iter 05401 | Loss 50.26 | Grad 471.16 | LR 0.000500
+[2025-04-11 11:55:24,625::train::INFO] [Validate] Iter 05401 | Loss 48.138010 
+[2025-04-11 11:55:38,808::train::INFO] [Train] Iter 05601 | Loss 50.30 | Grad 454.67 | LR 0.000500
+[2025-04-11 11:55:39,422::train::INFO] [Validate] Iter 05601 | Loss 55.189845 
+[2025-04-11 11:55:54,008::train::INFO] [Train] Iter 05801 | Loss 48.02 | Grad 409.65 | LR 0.000500
+[2025-04-11 11:55:54,618::train::INFO] [Validate] Iter 05801 | Loss 51.642365 
+[2025-04-11 11:56:08,816::train::INFO] [Train] Iter 06001 | Loss 50.09 | Grad 537.15 | LR 0.000500
+[2025-04-11 11:56:09,426::train::INFO] [Validate] Iter 06001 | Loss 53.327801 
+[2025-04-11 11:56:24,110::train::INFO] [Train] Iter 06201 | Loss 49.26 | Grad 442.51 | LR 0.000500
+[2025-04-11 11:56:24,729::train::INFO] [Validate] Iter 06201 | Loss 49.007141 
+[2025-04-11 11:56:38,900::train::INFO] [Train] Iter 06401 | Loss 47.94 | Grad 449.04 | LR 0.000500
+[2025-04-11 11:56:39,514::train::INFO] [Validate] Iter 06401 | Loss 48.959282 
+[2025-04-11 11:56:54,090::train::INFO] [Train] Iter 06601 | Loss 49.49 | Grad 519.02 | LR 0.000500
+[2025-04-11 11:56:54,702::train::INFO] [Validate] Iter 06601 | Loss 51.617353 
+[2025-04-11 11:57:08,886::train::INFO] [Train] Iter 06801 | Loss 46.39 | Grad 430.28 | LR 0.000500
+[2025-04-11 11:57:09,495::train::INFO] [Validate] Iter 06801 | Loss 52.796276 
+[2025-04-11 11:57:24,010::train::INFO] [Train] Iter 07001 | Loss 46.56 | Grad 414.27 | LR 0.000500
+[2025-04-11 11:57:24,617::train::INFO] [Validate] Iter 07001 | Loss 47.477751 
+[2025-04-11 11:57:38,839::train::INFO] [Train] Iter 07201 | Loss 46.24 | Grad 407.01 | LR 0.000500
+[2025-04-11 11:57:39,449::train::INFO] [Validate] Iter 07201 | Loss 51.604932 
+[2025-04-11 11:57:54,003::train::INFO] [Train] Iter 07401 | Loss 45.78 | Grad 427.11 | LR 0.000500
+[2025-04-11 11:57:54,613::train::INFO] [Validate] Iter 07401 | Loss 51.451048 
+[2025-04-11 11:58:08,784::train::INFO] [Train] Iter 07601 | Loss 45.79 | Grad 431.04 | LR 0.000500
+[2025-04-11 11:58:09,392::train::INFO] [Validate] Iter 07601 | Loss 56.827853 
+[2025-04-11 11:58:23,907::train::INFO] [Train] Iter 07801 | Loss 46.16 | Grad 417.07 | LR 0.000500
+[2025-04-11 11:58:24,515::train::INFO] [Validate] Iter 07801 | Loss 55.789364 
+[2025-04-11 11:58:38,694::train::INFO] [Train] Iter 08001 | Loss 45.89 | Grad 446.90 | LR 0.000500
+[2025-04-11 11:58:39,302::train::INFO] [Validate] Iter 08001 | Loss 52.549193 
+[2025-04-11 11:58:53,823::train::INFO] [Train] Iter 08201 | Loss 45.67 | Grad 451.38 | LR 0.000500
+[2025-04-11 11:58:54,433::train::INFO] [Validate] Iter 08201 | Loss 51.488558 
+[2025-04-11 11:59:08,608::train::INFO] [Train] Iter 08401 | Loss 46.15 | Grad 472.24 | LR 0.000500
+[2025-04-11 11:59:09,574::train::INFO] [Validate] Iter 08401 | Loss 52.490106 
+[2025-04-11 11:59:23,844::train::INFO] [Train] Iter 08601 | Loss 45.05 | Grad 449.20 | LR 0.000500
+[2025-04-11 11:59:24,459::train::INFO] [Validate] Iter 08601 | Loss 46.188344 
+[2025-04-11 11:59:39,980::train::INFO] [Train] Iter 08801 | Loss 44.96 | Grad 415.60 | LR 0.000500
+[2025-04-11 11:59:40,596::train::INFO] [Validate] Iter 08801 | Loss 48.934569 
+[2025-04-11 11:59:54,816::train::INFO] [Train] Iter 09001 | Loss 46.73 | Grad 515.95 | LR 0.000500
+[2025-04-11 11:59:55,435::train::INFO] [Validate] Iter 09001 | Loss 51.304930 
+[2025-04-11 12:00:09,999::train::INFO] [Train] Iter 09201 | Loss 45.84 | Grad 441.62 | LR 0.000500
+[2025-04-11 12:00:10,605::train::INFO] [Validate] Iter 09201 | Loss 52.827860 
+[2025-04-11 12:00:24,928::train::INFO] [Train] Iter 09401 | Loss 44.41 | Grad 415.05 | LR 0.000500
+[2025-04-11 12:00:25,539::train::INFO] [Validate] Iter 09401 | Loss 46.475909 
+[2025-04-11 12:00:40,251::train::INFO] [Train] Iter 09601 | Loss 44.47 | Grad 478.06 | LR 0.000500
+[2025-04-11 12:00:40,871::train::INFO] [Validate] Iter 09601 | Loss 52.754967 
+[2025-04-11 12:00:55,160::train::INFO] [Train] Iter 09801 | Loss 43.91 | Grad 427.59 | LR 0.000500
+[2025-04-11 12:00:55,781::train::INFO] [Validate] Iter 09801 | Loss 49.766912 
+[2025-04-11 12:01:10,430::train::INFO] [Train] Iter 10001 | Loss 42.49 | Grad 364.63 | LR 0.000500
+[2025-04-11 12:01:11,043::train::INFO] [Validate] Iter 10001 | Loss 48.546090 
+[2025-04-11 12:01:25,570::train::INFO] [Train] Iter 10201 | Loss 44.53 | Grad 484.26 | LR 0.000500
+[2025-04-11 12:01:26,181::train::INFO] [Validate] Iter 10201 | Loss 48.215418 
+[2025-04-11 12:01:40,458::train::INFO] [Train] Iter 10401 | Loss 44.30 | Grad 468.40 | LR 0.000500
+[2025-04-11 12:01:41,066::train::INFO] [Validate] Iter 10401 | Loss 46.304952 
+[2025-04-11 12:01:55,688::train::INFO] [Train] Iter 10601 | Loss 44.14 | Grad 474.19 | LR 0.000500
+[2025-04-11 12:01:56,299::train::INFO] [Validate] Iter 10601 | Loss 47.282312 
+[2025-04-11 12:02:10,570::train::INFO] [Train] Iter 10801 | Loss 42.48 | Grad 371.41 | LR 0.000500
+[2025-04-11 12:02:11,179::train::INFO] [Validate] Iter 10801 | Loss 52.087183 
+[2025-04-11 12:02:25,932::train::INFO] [Train] Iter 11001 | Loss 41.87 | Grad 413.73 | LR 0.000400
+[2025-04-11 12:02:26,545::train::INFO] [Validate] Iter 11001 | Loss 48.913565 
+[2025-04-11 12:02:40,878::train::INFO] [Train] Iter 11201 | Loss 41.93 | Grad 424.67 | LR 0.000400
+[2025-04-11 12:02:41,496::train::INFO] [Validate] Iter 11201 | Loss 47.908920 
+[2025-04-11 12:02:56,200::train::INFO] [Train] Iter 11401 | Loss 40.56 | Grad 413.40 | LR 0.000400
+[2025-04-11 12:02:56,828::train::INFO] [Validate] Iter 11401 | Loss 47.339720 
+[2025-04-11 12:03:11,178::train::INFO] [Train] Iter 11601 | Loss 40.68 | Grad 430.44 | LR 0.000400
+[2025-04-11 12:03:11,788::train::INFO] [Validate] Iter 11601 | Loss 51.780565 
+[2025-04-11 12:03:26,425::train::INFO] [Train] Iter 11801 | Loss 40.27 | Grad 378.28 | LR 0.000400
+[2025-04-11 12:03:27,041::train::INFO] [Validate] Iter 11801 | Loss 49.963582 
+[2025-04-11 12:03:41,356::train::INFO] [Train] Iter 12001 | Loss 40.55 | Grad 415.50 | LR 0.000400
+[2025-04-11 12:03:41,975::train::INFO] [Validate] Iter 12001 | Loss 43.893205 
+[2025-04-11 12:03:56,640::train::INFO] [Train] Iter 12201 | Loss 41.05 | Grad 439.27 | LR 0.000400
+[2025-04-11 12:03:57,255::train::INFO] [Validate] Iter 12201 | Loss 46.407528 
+[2025-04-11 12:04:11,484::train::INFO] [Train] Iter 12401 | Loss 40.36 | Grad 409.87 | LR 0.000400
+[2025-04-11 12:04:12,102::train::INFO] [Validate] Iter 12401 | Loss 48.472952 
+[2025-04-11 12:04:26,666::train::INFO] [Train] Iter 12601 | Loss 40.48 | Grad 385.14 | LR 0.000400
+[2025-04-11 12:04:27,276::train::INFO] [Validate] Iter 12601 | Loss 46.932271 
+[2025-04-11 12:04:41,520::train::INFO] [Train] Iter 12801 | Loss 41.24 | Grad 462.10 | LR 0.000400
+[2025-04-11 12:04:42,135::train::INFO] [Validate] Iter 12801 | Loss 45.831891 
+[2025-04-11 12:04:56,828::train::INFO] [Train] Iter 13001 | Loss 41.78 | Grad 425.38 | LR 0.000400
+[2025-04-11 12:04:57,439::train::INFO] [Validate] Iter 13001 | Loss 48.085743 
+[2025-04-11 12:05:11,664::train::INFO] [Train] Iter 13201 | Loss 40.13 | Grad 414.77 | LR 0.000400
+[2025-04-11 12:05:12,280::train::INFO] [Validate] Iter 13201 | Loss 55.937886 
+[2025-04-11 12:05:26,920::train::INFO] [Train] Iter 13401 | Loss 40.25 | Grad 471.85 | LR 0.000400
+[2025-04-11 12:05:27,533::train::INFO] [Validate] Iter 13401 | Loss 55.724013 
+[2025-04-11 12:05:41,816::train::INFO] [Train] Iter 13601 | Loss 40.33 | Grad 467.52 | LR 0.000400
+[2025-04-11 12:05:42,430::train::INFO] [Validate] Iter 13601 | Loss 44.940795 
+[2025-04-11 12:05:57,212::train::INFO] [Train] Iter 13801 | Loss 40.51 | Grad 471.13 | LR 0.000400
+[2025-04-11 12:05:57,827::train::INFO] [Validate] Iter 13801 | Loss 49.619372 
+[2025-04-11 12:06:12,134::train::INFO] [Train] Iter 14001 | Loss 39.39 | Grad 408.55 | LR 0.000400
+[2025-04-11 12:06:12,754::train::INFO] [Validate] Iter 14001 | Loss 44.537859 
+[2025-04-11 12:06:27,424::train::INFO] [Train] Iter 14201 | Loss 38.44 | Grad 351.43 | LR 0.000400
+[2025-04-11 12:06:28,044::train::INFO] [Validate] Iter 14201 | Loss 50.736185 
+[2025-04-11 12:06:42,331::train::INFO] [Train] Iter 14401 | Loss 36.95 | Grad 363.67 | LR 0.000320
+[2025-04-11 12:06:43,311::train::INFO] [Validate] Iter 14401 | Loss 47.906042 
+[2025-04-11 12:06:57,610::train::INFO] [Train] Iter 14601 | Loss 37.47 | Grad 387.22 | LR 0.000320
+[2025-04-11 12:06:58,222::train::INFO] [Validate] Iter 14601 | Loss 47.673387 
+[2025-04-11 12:07:12,955::train::INFO] [Train] Iter 14801 | Loss 38.34 | Grad 469.06 | LR 0.000320
+[2025-04-11 12:07:13,568::train::INFO] [Validate] Iter 14801 | Loss 45.482195 
+[2025-04-11 12:07:27,904::train::INFO] [Train] Iter 15001 | Loss 37.46 | Grad 350.57 | LR 0.000320
+[2025-04-11 12:07:28,525::train::INFO] [Validate] Iter 15001 | Loss 49.091525 
+[2025-04-11 12:07:43,123::train::INFO] [Train] Iter 15201 | Loss 37.22 | Grad 405.26 | LR 0.000320
+[2025-04-11 12:07:43,742::train::INFO] [Validate] Iter 15201 | Loss 47.071401 
+[2025-04-11 12:07:57,948::train::INFO] [Train] Iter 15401 | Loss 36.28 | Grad 388.44 | LR 0.000320
+[2025-04-11 12:07:58,562::train::INFO] [Validate] Iter 15401 | Loss 42.412346 
+[2025-04-11 12:08:13,386::train::INFO] [Train] Iter 15601 | Loss 37.03 | Grad 394.15 | LR 0.000320
+[2025-04-11 12:08:13,999::train::INFO] [Validate] Iter 15601 | Loss 50.131498 
+[2025-04-11 12:08:28,447::train::INFO] [Train] Iter 15801 | Loss 36.62 | Grad 376.40 | LR 0.000320
+[2025-04-11 12:08:29,086::train::INFO] [Validate] Iter 15801 | Loss 48.571584 
+[2025-04-11 12:08:43,823::train::INFO] [Train] Iter 16001 | Loss 36.39 | Grad 373.59 | LR 0.000320
+[2025-04-11 12:08:44,445::train::INFO] [Validate] Iter 16001 | Loss 45.061475 
+[2025-04-11 12:08:59,076::train::INFO] [Train] Iter 16201 | Loss 37.43 | Grad 444.03 | LR 0.000320
+[2025-04-11 12:08:59,684::train::INFO] [Validate] Iter 16201 | Loss 43.267008 
+[2025-04-11 12:09:13,901::train::INFO] [Train] Iter 16401 | Loss 36.31 | Grad 380.01 | LR 0.000320
+[2025-04-11 12:09:14,512::train::INFO] [Validate] Iter 16401 | Loss 45.384895 
+[2025-04-11 12:09:29,087::train::INFO] [Train] Iter 16601 | Loss 36.40 | Grad 422.33 | LR 0.000320
+[2025-04-11 12:09:29,709::train::INFO] [Validate] Iter 16601 | Loss 47.299800 
+[2025-04-11 12:09:44,020::train::INFO] [Train] Iter 16801 | Loss 36.34 | Grad 350.10 | LR 0.000320
+[2025-04-11 12:09:44,643::train::INFO] [Validate] Iter 16801 | Loss 45.650510 
+[2025-04-11 12:09:59,225::train::INFO] [Train] Iter 17001 | Loss 37.84 | Grad 513.91 | LR 0.000320
+[2025-04-11 12:09:59,837::train::INFO] [Validate] Iter 17001 | Loss 43.048784 
+[2025-04-11 12:10:14,051::train::INFO] [Train] Iter 17201 | Loss 36.33 | Grad 442.33 | LR 0.000320
+[2025-04-11 12:10:14,671::train::INFO] [Validate] Iter 17201 | Loss 46.109391 
+[2025-04-11 12:10:29,249::train::INFO] [Train] Iter 17401 | Loss 36.42 | Grad 423.81 | LR 0.000320
+[2025-04-11 12:10:29,860::train::INFO] [Validate] Iter 17401 | Loss 43.427610 
+[2025-04-11 12:10:44,212::train::INFO] [Train] Iter 17601 | Loss 36.82 | Grad 476.34 | LR 0.000320
+[2025-04-11 12:10:44,832::train::INFO] [Validate] Iter 17601 | Loss 45.058112 
+[2025-04-11 12:10:59,385::train::INFO] [Train] Iter 17801 | Loss 34.77 | Grad 334.60 | LR 0.000256
+[2025-04-11 12:10:59,994::train::INFO] [Validate] Iter 17801 | Loss 45.681440 
+[2025-04-11 12:11:14,208::train::INFO] [Train] Iter 18001 | Loss 34.19 | Grad 381.76 | LR 0.000256
+[2025-04-11 12:11:14,828::train::INFO] [Validate] Iter 18001 | Loss 45.219528 
+[2025-04-11 12:11:29,438::train::INFO] [Train] Iter 18201 | Loss 34.52 | Grad 374.58 | LR 0.000256
+[2025-04-11 12:11:30,048::train::INFO] [Validate] Iter 18201 | Loss 46.553394 
+[2025-04-11 12:11:44,334::train::INFO] [Train] Iter 18401 | Loss 33.91 | Grad 343.63 | LR 0.000256
+[2025-04-11 12:11:44,952::train::INFO] [Validate] Iter 18401 | Loss 43.004426 
+[2025-04-11 12:11:59,782::train::INFO] [Train] Iter 18601 | Loss 34.49 | Grad 406.60 | LR 0.000256
+[2025-04-11 12:12:00,405::train::INFO] [Validate] Iter 18601 | Loss 51.892106 
+[2025-04-11 12:12:14,804::train::INFO] [Train] Iter 18801 | Loss 35.52 | Grad 499.40 | LR 0.000256
+[2025-04-11 12:12:15,423::train::INFO] [Validate] Iter 18801 | Loss 43.202062 
+[2025-04-11 12:12:30,151::train::INFO] [Train] Iter 19001 | Loss 33.87 | Grad 404.89 | LR 0.000256
+[2025-04-11 12:12:30,768::train::INFO] [Validate] Iter 19001 | Loss 42.833472 
+[2025-04-11 12:12:45,122::train::INFO] [Train] Iter 19201 | Loss 33.43 | Grad 367.08 | LR 0.000256
+[2025-04-11 12:12:46,105::train::INFO] [Validate] Iter 19201 | Loss 50.324009 
+[2025-04-11 12:13:00,569::train::INFO] [Train] Iter 19401 | Loss 34.01 | Grad 414.11 | LR 0.000256
+[2025-04-11 12:13:01,193::train::INFO] [Validate] Iter 19401 | Loss 43.740929 
+[2025-04-11 12:13:15,958::train::INFO] [Train] Iter 19601 | Loss 35.01 | Grad 496.41 | LR 0.000256
+[2025-04-11 12:13:16,574::train::INFO] [Validate] Iter 19601 | Loss 42.761793 
+[2025-04-11 12:13:30,944::train::INFO] [Train] Iter 19801 | Loss 33.72 | Grad 385.63 | LR 0.000256
+[2025-04-11 12:13:31,564::train::INFO] [Validate] Iter 19801 | Loss 45.075954 
+[2025-04-11 12:13:46,322::train::INFO] [Train] Iter 20001 | Loss 32.70 | Grad 349.29 | LR 0.000205
+[2025-04-11 12:13:46,932::train::INFO] [Validate] Iter 20001 | Loss 46.623585 
+[2025-04-11 12:14:01,292::train::INFO] [Train] Iter 20201 | Loss 31.93 | Grad 344.65 | LR 0.000205
+[2025-04-11 12:14:01,904::train::INFO] [Validate] Iter 20201 | Loss 44.323286 
+[2025-04-11 12:14:16,696::train::INFO] [Train] Iter 20401 | Loss 32.34 | Grad 318.64 | LR 0.000205
+[2025-04-11 12:14:17,316::train::INFO] [Validate] Iter 20401 | Loss 43.648194 
+[2025-04-11 12:14:31,785::train::INFO] [Train] Iter 20601 | Loss 33.18 | Grad 433.38 | LR 0.000205
+[2025-04-11 12:14:32,403::train::INFO] [Validate] Iter 20601 | Loss 44.224228 
+[2025-04-11 12:14:47,106::train::INFO] [Train] Iter 20801 | Loss 32.32 | Grad 379.04 | LR 0.000205
+[2025-04-11 12:14:47,720::train::INFO] [Validate] Iter 20801 | Loss 45.832195 
+[2025-04-11 12:15:02,112::train::INFO] [Train] Iter 21001 | Loss 32.09 | Grad 350.05 | LR 0.000205
+[2025-04-11 12:15:02,730::train::INFO] [Validate] Iter 21001 | Loss 47.240751 
+[2025-04-11 12:15:17,521::train::INFO] [Train] Iter 21201 | Loss 33.02 | Grad 437.24 | LR 0.000205
+[2025-04-11 12:15:18,142::train::INFO] [Validate] Iter 21201 | Loss 47.189808 
+[2025-04-11 12:15:32,592::train::INFO] [Train] Iter 21401 | Loss 31.67 | Grad 326.73 | LR 0.000205
+[2025-04-11 12:15:33,211::train::INFO] [Validate] Iter 21401 | Loss 41.044796 
+[2025-04-11 12:15:47,977::train::INFO] [Train] Iter 21601 | Loss 31.60 | Grad 349.07 | LR 0.000205
+[2025-04-11 12:15:48,589::train::INFO] [Validate] Iter 21601 | Loss 50.834803 
+[2025-04-11 12:16:02,840::train::INFO] [Train] Iter 21801 | Loss 31.93 | Grad 424.68 | LR 0.000205
+[2025-04-11 12:16:03,458::train::INFO] [Validate] Iter 21801 | Loss 46.271881 
+[2025-04-11 12:16:18,010::train::INFO] [Train] Iter 22001 | Loss 31.95 | Grad 372.83 | LR 0.000205
+[2025-04-11 12:16:18,619::train::INFO] [Validate] Iter 22001 | Loss 44.742316 
+[2025-04-11 12:16:32,821::train::INFO] [Train] Iter 22201 | Loss 32.74 | Grad 385.06 | LR 0.000205
+[2025-04-11 12:16:33,806::train::INFO] [Validate] Iter 22201 | Loss 49.044216 
+[2025-04-11 12:16:48,159::train::INFO] [Train] Iter 22401 | Loss 32.00 | Grad 390.22 | LR 0.000205
+[2025-04-11 12:16:48,773::train::INFO] [Validate] Iter 22401 | Loss 44.140470 
+[2025-04-11 12:17:03,363::train::INFO] [Train] Iter 22601 | Loss 32.05 | Grad 396.66 | LR 0.000205
+[2025-04-11 12:17:03,975::train::INFO] [Validate] Iter 22601 | Loss 45.608037 
+[2025-04-11 12:17:18,200::train::INFO] [Train] Iter 22801 | Loss 31.59 | Grad 376.03 | LR 0.000205
+[2025-04-11 12:17:18,819::train::INFO] [Validate] Iter 22801 | Loss 45.179853 
+[2025-04-11 12:17:33,422::train::INFO] [Train] Iter 23001 | Loss 31.87 | Grad 460.34 | LR 0.000205
+[2025-04-11 12:17:34,036::train::INFO] [Validate] Iter 23001 | Loss 43.794322 
+[2025-04-11 12:17:48,426::train::INFO] [Train] Iter 23201 | Loss 31.71 | Grad 427.09 | LR 0.000205
+[2025-04-11 12:17:49,044::train::INFO] [Validate] Iter 23201 | Loss 44.151540 
+[2025-04-11 12:18:03,726::train::INFO] [Train] Iter 23401 | Loss 31.56 | Grad 426.39 | LR 0.000205
+[2025-04-11 12:18:04,343::train::INFO] [Validate] Iter 23401 | Loss 43.942420 
+[2025-04-11 12:18:18,669::train::INFO] [Train] Iter 23601 | Loss 32.08 | Grad 403.08 | LR 0.000205
+[2025-04-11 12:18:19,295::train::INFO] [Validate] Iter 23601 | Loss 45.436613 
+[2025-04-11 12:18:33,957::train::INFO] [Train] Iter 23801 | Loss 30.96 | Grad 385.11 | LR 0.000164
+[2025-04-11 12:18:34,570::train::INFO] [Validate] Iter 23801 | Loss 48.731405 
+[2025-04-11 12:18:48,840::train::INFO] [Train] Iter 24001 | Loss 30.29 | Grad 362.60 | LR 0.000164
+[2025-04-11 12:18:49,451::train::INFO] [Validate] Iter 24001 | Loss 41.991612 
+[2025-04-11 12:19:04,187::train::INFO] [Train] Iter 24201 | Loss 30.26 | Grad 351.33 | LR 0.000164
+[2025-04-11 12:19:04,802::train::INFO] [Validate] Iter 24201 | Loss 44.285664 
+[2025-04-11 12:19:19,530::train::INFO] [Train] Iter 24401 | Loss 30.13 | Grad 354.08 | LR 0.000164
+[2025-04-11 12:19:20,144::train::INFO] [Validate] Iter 24401 | Loss 49.492274 
+[2025-04-11 12:19:34,344::train::INFO] [Train] Iter 24601 | Loss 30.01 | Grad 326.22 | LR 0.000164
+[2025-04-11 12:19:34,968::train::INFO] [Validate] Iter 24601 | Loss 44.850131 
+[2025-04-11 12:19:49,565::train::INFO] [Train] Iter 24801 | Loss 30.23 | Grad 402.11 | LR 0.000164
+[2025-04-11 12:19:50,175::train::INFO] [Validate] Iter 24801 | Loss 45.232980 
+[2025-04-11 12:20:04,437::train::INFO] [Train] Iter 25001 | Loss 29.97 | Grad 382.93 | LR 0.000164
+[2025-04-11 12:20:05,049::train::INFO] [Validate] Iter 25001 | Loss 47.777491 
+[2025-04-11 12:20:19,692::train::INFO] [Train] Iter 25201 | Loss 30.02 | Grad 347.43 | LR 0.000164
+[2025-04-11 12:20:20,305::train::INFO] [Validate] Iter 25201 | Loss 43.180488 
+[2025-04-11 12:20:34,534::train::INFO] [Train] Iter 25401 | Loss 30.59 | Grad 423.86 | LR 0.000164
+[2025-04-11 12:20:35,162::train::INFO] [Validate] Iter 25401 | Loss 48.917658 
+[2025-04-11 12:20:49,817::train::INFO] [Train] Iter 25601 | Loss 29.19 | Grad 308.90 | LR 0.000164
+[2025-04-11 12:20:50,429::train::INFO] [Validate] Iter 25601 | Loss 42.343299 
+[2025-04-11 12:21:04,679::train::INFO] [Train] Iter 25801 | Loss 30.00 | Grad 374.32 | LR 0.000164
+[2025-04-11 12:21:05,289::train::INFO] [Validate] Iter 25801 | Loss 46.052592 
+[2025-04-11 12:21:19,928::train::INFO] [Train] Iter 26001 | Loss 29.53 | Grad 332.46 | LR 0.000131
+[2025-04-11 12:21:20,539::train::INFO] [Validate] Iter 26001 | Loss 44.091479 
+[2025-04-11 12:21:34,793::train::INFO] [Train] Iter 26201 | Loss 29.63 | Grad 419.76 | LR 0.000131
+[2025-04-11 12:21:35,403::train::INFO] [Validate] Iter 26201 | Loss 43.266404 
+[2025-04-11 12:21:50,023::train::INFO] [Train] Iter 26401 | Loss 29.14 | Grad 354.86 | LR 0.000131
+[2025-04-11 12:21:50,632::train::INFO] [Validate] Iter 26401 | Loss 45.033743 
+[2025-04-11 12:22:04,914::train::INFO] [Train] Iter 26601 | Loss 29.04 | Grad 395.89 | LR 0.000131
+[2025-04-11 12:22:05,520::train::INFO] [Validate] Iter 26601 | Loss 46.317950 
+[2025-04-11 12:22:20,136::train::INFO] [Train] Iter 26801 | Loss 29.41 | Grad 396.20 | LR 0.000131
+[2025-04-11 12:22:20,747::train::INFO] [Validate] Iter 26801 | Loss 51.203674 
+[2025-04-11 12:22:34,922::train::INFO] [Train] Iter 27001 | Loss 29.22 | Grad 458.54 | LR 0.000131
+[2025-04-11 12:22:35,894::train::INFO] [Validate] Iter 27001 | Loss 47.170034 
+[2025-04-11 12:22:50,107::train::INFO] [Train] Iter 27201 | Loss 29.28 | Grad 355.68 | LR 0.000131
+[2025-04-11 12:22:50,715::train::INFO] [Validate] Iter 27201 | Loss 45.203264 
+[2025-04-11 12:23:05,269::train::INFO] [Train] Iter 27401 | Loss 28.51 | Grad 300.83 | LR 0.000131
+[2025-04-11 12:23:05,881::train::INFO] [Validate] Iter 27401 | Loss 49.471018 
+[2025-04-11 12:23:20,061::train::INFO] [Train] Iter 27601 | Loss 28.70 | Grad 358.06 | LR 0.000131
+[2025-04-11 12:23:20,671::train::INFO] [Validate] Iter 27601 | Loss 47.006343 
+[2025-04-11 12:23:35,219::train::INFO] [Train] Iter 27801 | Loss 28.41 | Grad 303.75 | LR 0.000131
+[2025-04-11 12:23:35,827::train::INFO] [Validate] Iter 27801 | Loss 50.510639 
+[2025-04-11 12:23:50,013::train::INFO] [Train] Iter 28001 | Loss 29.00 | Grad 400.15 | LR 0.000131
+[2025-04-11 12:23:50,623::train::INFO] [Validate] Iter 28001 | Loss 47.714011 
+[2025-04-11 12:24:05,170::train::INFO] [Train] Iter 28201 | Loss 28.94 | Grad 434.31 | LR 0.000125
+[2025-04-11 12:24:05,778::train::INFO] [Validate] Iter 28201 | Loss 49.962969 
+[2025-04-11 12:24:19,979::train::INFO] [Train] Iter 28401 | Loss 28.86 | Grad 397.61 | LR 0.000125
+[2025-04-11 12:24:20,586::train::INFO] [Validate] Iter 28401 | Loss 46.656734 
+[2025-04-11 12:24:35,111::train::INFO] [Train] Iter 28601 | Loss 28.48 | Grad 307.88 | LR 0.000125
+[2025-04-11 12:24:35,722::train::INFO] [Validate] Iter 28601 | Loss 47.270679 
+[2025-04-11 12:24:49,975::train::INFO] [Train] Iter 28801 | Loss 28.57 | Grad 382.01 | LR 0.000125
+[2025-04-11 12:24:50,583::train::INFO] [Validate] Iter 28801 | Loss 49.689263 
+[2025-04-11 12:25:05,213::train::INFO] [Train] Iter 29001 | Loss 28.77 | Grad 393.70 | LR 0.000125
+[2025-04-11 12:25:05,823::train::INFO] [Validate] Iter 29001 | Loss 51.326265 
+[2025-04-11 12:25:20,076::train::INFO] [Train] Iter 29201 | Loss 28.33 | Grad 388.30 | LR 0.000125
+[2025-04-11 12:25:20,685::train::INFO] [Validate] Iter 29201 | Loss 45.214732 
+[2025-04-11 12:25:35,306::train::INFO] [Train] Iter 29401 | Loss 28.10 | Grad 324.90 | LR 0.000125
+[2025-04-11 12:25:35,917::train::INFO] [Validate] Iter 29401 | Loss 46.717680 
+[2025-04-11 12:25:50,193::train::INFO] [Train] Iter 29601 | Loss 28.49 | Grad 444.53 | LR 0.000125
+[2025-04-11 12:25:50,805::train::INFO] [Validate] Iter 29601 | Loss 49.530167 
+[2025-04-11 12:26:05,420::train::INFO] [Train] Iter 29801 | Loss 28.24 | Grad 350.52 | LR 0.000125
+[2025-04-11 12:26:06,031::train::INFO] [Validate] Iter 29801 | Loss 45.538791 
+[2025-04-11 12:26:20,289::train::INFO] [Train] Iter 30001 | Loss 28.08 | Grad 395.50 | LR 0.000125
+[2025-04-11 12:26:20,897::train::INFO] [Validate] Iter 30001 | Loss 49.113015 
+[2025-04-11 12:26:35,542::train::INFO] [Train] Iter 30201 | Loss 27.95 | Grad 328.09 | LR 0.000125
+[2025-04-11 12:26:36,155::train::INFO] [Validate] Iter 30201 | Loss 47.060373 
+[2025-04-11 12:26:50,417::train::INFO] [Train] Iter 30401 | Loss 27.86 | Grad 348.94 | LR 0.000125
+[2025-04-11 12:26:51,390::train::INFO] [Validate] Iter 30401 | Loss 49.669028 
+[2025-04-11 12:27:05,645::train::INFO] [Train] Iter 30601 | Loss 28.85 | Grad 391.87 | LR 0.000125
+[2025-04-11 12:27:06,256::train::INFO] [Validate] Iter 30601 | Loss 49.111171 
+[2025-04-11 12:27:20,897::train::INFO] [Train] Iter 30801 | Loss 28.01 | Grad 394.70 | LR 0.000125
+[2025-04-11 12:27:21,508::train::INFO] [Validate] Iter 30801 | Loss 51.246009 
+[2025-04-11 12:27:35,764::train::INFO] [Train] Iter 31001 | Loss 27.72 | Grad 336.81 | LR 0.000125
+[2025-04-11 12:27:36,372::train::INFO] [Validate] Iter 31001 | Loss 48.576134 
+[2025-04-11 12:27:51,000::train::INFO] [Train] Iter 31201 | Loss 28.61 | Grad 352.08 | LR 0.000125
+[2025-04-11 12:27:51,611::train::INFO] [Validate] Iter 31201 | Loss 47.404786 
+[2025-04-11 12:28:05,878::train::INFO] [Train] Iter 31401 | Loss 27.80 | Grad 401.18 | LR 0.000125
+[2025-04-11 12:28:06,487::train::INFO] [Validate] Iter 31401 | Loss 49.164101 
+[2025-04-11 12:28:21,094::train::INFO] [Train] Iter 31601 | Loss 28.15 | Grad 400.09 | LR 0.000125
+[2025-04-11 12:28:21,701::train::INFO] [Validate] Iter 31601 | Loss 53.018856 
+[2025-04-11 12:28:35,976::train::INFO] [Train] Iter 31801 | Loss 28.48 | Grad 354.17 | LR 0.000125
+[2025-04-11 12:28:36,588::train::INFO] [Validate] Iter 31801 | Loss 46.013159 
+[2025-04-11 12:28:51,242::train::INFO] [Train] Iter 32001 | Loss 27.78 | Grad 350.62 | LR 0.000125
+[2025-04-11 12:28:51,850::train::INFO] [Validate] Iter 32001 | Loss 44.743393 
+[2025-04-11 12:29:06,120::train::INFO] [Train] Iter 32201 | Loss 28.17 | Grad 373.54 | LR 0.000125
+[2025-04-11 12:29:06,730::train::INFO] [Validate] Iter 32201 | Loss 47.769253 
+[2025-04-11 12:29:21,346::train::INFO] [Train] Iter 32401 | Loss 27.78 | Grad 311.07 | LR 0.000125
+[2025-04-11 12:29:21,954::train::INFO] [Validate] Iter 32401 | Loss 47.133966 
+[2025-04-11 12:29:36,211::train::INFO] [Train] Iter 32601 | Loss 27.47 | Grad 359.65 | LR 0.000125
+[2025-04-11 12:29:37,182::train::INFO] [Validate] Iter 32601 | Loss 48.979714 
+[2025-04-11 12:29:51,431::train::INFO] [Train] Iter 32801 | Loss 27.92 | Grad 443.79 | LR 0.000125
+[2025-04-11 12:29:52,039::train::INFO] [Validate] Iter 32801 | Loss 46.024817 
+[2025-04-11 12:30:06,297::train::INFO] [Train] Iter 33001 | Loss 27.58 | Grad 355.03 | LR 0.000125
+[2025-04-11 12:30:07,267::train::INFO] [Validate] Iter 33001 | Loss 46.889788 
+[2025-04-11 12:30:21,553::train::INFO] [Train] Iter 33201 | Loss 28.13 | Grad 414.34 | LR 0.000125
+[2025-04-11 12:30:22,165::train::INFO] [Validate] Iter 33201 | Loss 45.988773 
+[2025-04-11 12:30:36,752::train::INFO] [Train] Iter 33401 | Loss 27.64 | Grad 357.74 | LR 0.000125
+[2025-04-11 12:30:37,363::train::INFO] [Validate] Iter 33401 | Loss 49.488139 
+[2025-04-11 12:30:51,548::train::INFO] [Train] Iter 33601 | Loss 28.13 | Grad 499.17 | LR 0.000125
+[2025-04-11 12:30:52,160::train::INFO] [Validate] Iter 33601 | Loss 48.813019 
+[2025-04-11 12:31:06,813::train::INFO] [Train] Iter 33801 | Loss 27.61 | Grad 350.81 | LR 0.000125
+[2025-04-11 12:31:07,424::train::INFO] [Validate] Iter 33801 | Loss 47.190570 
+[2025-04-11 12:31:21,617::train::INFO] [Train] Iter 34001 | Loss 27.90 | Grad 437.56 | LR 0.000125
+[2025-04-11 12:31:22,227::train::INFO] [Validate] Iter 34001 | Loss 45.189965 
+[2025-04-11 12:31:36,827::train::INFO] [Train] Iter 34201 | Loss 27.94 | Grad 460.05 | LR 0.000125
+[2025-04-11 12:31:37,437::train::INFO] [Validate] Iter 34201 | Loss 50.501164 
+[2025-04-11 12:31:51,719::train::INFO] [Train] Iter 34401 | Loss 26.94 | Grad 324.47 | LR 0.000125
+[2025-04-11 12:31:52,334::train::INFO] [Validate] Iter 34401 | Loss 47.349465 
+[2025-04-11 12:32:06,958::train::INFO] [Train] Iter 34601 | Loss 27.86 | Grad 447.08 | LR 0.000125
+[2025-04-11 12:32:07,569::train::INFO] [Validate] Iter 34601 | Loss 48.310841 
+[2025-04-11 12:32:21,831::train::INFO] [Train] Iter 34801 | Loss 28.30 | Grad 454.13 | LR 0.000125
+[2025-04-11 12:32:22,442::train::INFO] [Validate] Iter 34801 | Loss 44.622522 
+[2025-04-11 12:32:37,074::train::INFO] [Train] Iter 35001 | Loss 26.91 | Grad 335.47 | LR 0.000125
+[2025-04-11 12:32:37,686::train::INFO] [Validate] Iter 35001 | Loss 47.178690 
+[2025-04-11 12:32:52,309::train::INFO] [Train] Iter 35201 | Loss 26.91 | Grad 311.42 | LR 0.000125
+[2025-04-11 12:32:52,920::train::INFO] [Validate] Iter 35201 | Loss 47.475874 
+[2025-04-11 12:33:07,189::train::INFO] [Train] Iter 35401 | Loss 27.89 | Grad 461.78 | LR 0.000125
+[2025-04-11 12:33:07,799::train::INFO] [Validate] Iter 35401 | Loss 51.263526 
+[2025-04-11 12:33:22,459::train::INFO] [Train] Iter 35601 | Loss 28.12 | Grad 498.99 | LR 0.000125
+[2025-04-11 12:33:23,070::train::INFO] [Validate] Iter 35601 | Loss 43.290537 
+[2025-04-11 12:33:37,335::train::INFO] [Train] Iter 35801 | Loss 27.09 | Grad 355.98 | LR 0.000125
+[2025-04-11 12:33:37,948::train::INFO] [Validate] Iter 35801 | Loss 50.499113 
+[2025-04-11 12:33:52,577::train::INFO] [Train] Iter 36001 | Loss 27.91 | Grad 376.01 | LR 0.000125
+[2025-04-11 12:33:53,188::train::INFO] [Validate] Iter 36001 | Loss 52.947026 
+[2025-04-11 12:34:07,468::train::INFO] [Train] Iter 36201 | Loss 27.51 | Grad 320.12 | LR 0.000125
+[2025-04-11 12:34:08,080::train::INFO] [Validate] Iter 36201 | Loss 49.580168 
+[2025-04-11 12:34:22,698::train::INFO] [Train] Iter 36401 | Loss 27.23 | Grad 367.79 | LR 0.000125
+[2025-04-11 12:34:23,309::train::INFO] [Validate] Iter 36401 | Loss 48.024519 
+[2025-04-11 12:34:37,575::train::INFO] [Train] Iter 36601 | Loss 27.27 | Grad 339.41 | LR 0.000125
+[2025-04-11 12:34:38,186::train::INFO] [Validate] Iter 36601 | Loss 47.310464 
+[2025-04-11 12:34:52,825::train::INFO] [Train] Iter 36801 | Loss 28.08 | Grad 483.49 | LR 0.000125
+[2025-04-11 12:34:53,435::train::INFO] [Validate] Iter 36801 | Loss 50.289129 
+[2025-04-11 12:35:07,703::train::INFO] [Train] Iter 37001 | Loss 27.10 | Grad 392.15 | LR 0.000125
+[2025-04-11 12:35:08,677::train::INFO] [Validate] Iter 37001 | Loss 47.273171 
+[2025-04-11 12:35:22,949::train::INFO] [Train] Iter 37201 | Loss 28.09 | Grad 488.42 | LR 0.000125
+[2025-04-11 12:35:23,558::train::INFO] [Validate] Iter 37201 | Loss 43.881437 
+[2025-04-11 12:35:38,202::train::INFO] [Train] Iter 37401 | Loss 27.51 | Grad 391.24 | LR 0.000125
+[2025-04-11 12:35:38,813::train::INFO] [Validate] Iter 37401 | Loss 47.377265 
+[2025-04-11 12:35:53,077::train::INFO] [Train] Iter 37601 | Loss 27.93 | Grad 394.07 | LR 0.000125
+[2025-04-11 12:35:53,688::train::INFO] [Validate] Iter 37601 | Loss 49.562335 
+[2025-04-11 12:36:08,314::train::INFO] [Train] Iter 37801 | Loss 26.57 | Grad 292.17 | LR 0.000125
+[2025-04-11 12:36:08,925::train::INFO] [Validate] Iter 37801 | Loss 45.971326 
+[2025-04-11 12:36:23,190::train::INFO] [Train] Iter 38001 | Loss 27.41 | Grad 402.81 | LR 0.000125
+[2025-04-11 12:36:23,798::train::INFO] [Validate] Iter 38001 | Loss 45.696052 
+[2025-04-11 12:36:38,363::train::INFO] [Train] Iter 38201 | Loss 27.11 | Grad 439.29 | LR 0.000125
+[2025-04-11 12:36:38,974::train::INFO] [Validate] Iter 38201 | Loss 51.960161 
+[2025-04-11 12:36:53,163::train::INFO] [Train] Iter 38401 | Loss 27.38 | Grad 377.53 | LR 0.000125
+[2025-04-11 12:36:53,776::train::INFO] [Validate] Iter 38401 | Loss 47.308004 
+[2025-04-11 12:37:08,344::train::INFO] [Train] Iter 38601 | Loss 27.04 | Grad 385.68 | LR 0.000125
+[2025-04-11 12:37:08,955::train::INFO] [Validate] Iter 38601 | Loss 48.839654 
+[2025-04-11 12:37:23,189::train::INFO] [Train] Iter 38801 | Loss 26.66 | Grad 323.01 | LR 0.000125
+[2025-04-11 12:37:23,801::train::INFO] [Validate] Iter 38801 | Loss 48.037106 
+[2025-04-11 12:37:38,422::train::INFO] [Train] Iter 39001 | Loss 27.96 | Grad 430.23 | LR 0.000125
+[2025-04-11 12:37:39,033::train::INFO] [Validate] Iter 39001 | Loss 48.852721 
+[2025-04-11 12:37:53,315::train::INFO] [Train] Iter 39201 | Loss 27.05 | Grad 343.58 | LR 0.000125
+[2025-04-11 12:37:53,926::train::INFO] [Validate] Iter 39201 | Loss 48.374193 
+[2025-04-11 12:38:08,544::train::INFO] [Train] Iter 39401 | Loss 27.19 | Grad 425.71 | LR 0.000125
+[2025-04-11 12:38:09,153::train::INFO] [Validate] Iter 39401 | Loss 46.065283 
+[2025-04-11 12:38:23,412::train::INFO] [Train] Iter 39601 | Loss 27.31 | Grad 330.20 | LR 0.000125
+[2025-04-11 12:38:24,384::train::INFO] [Validate] Iter 39601 | Loss 55.482980 
+[2025-04-11 12:38:38,658::train::INFO] [Train] Iter 39801 | Loss 27.42 | Grad 381.32 | LR 0.000125
+[2025-04-11 12:38:39,269::train::INFO] [Validate] Iter 39801 | Loss 49.207005 
+[2025-04-11 12:38:53,795::train::INFO] [Train] Iter 40000 | Loss 27.23 | Grad 385.31 | LR 0.000125
+[2025-04-11 12:38:54,406::train::INFO] [Validate] Iter 40000 | Loss 48.422674 

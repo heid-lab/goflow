@@ -1,0 +1,5 @@
+- model.num_steps=10
+- model.num_samples=25
+- task_name=test_ablate_steps
+- train=False
+- custom_model_weight_path=logs/train_test_error_bar/multiruns/2025-04-11_09-32-05/2/checkpoints/epoch_294.ckpt

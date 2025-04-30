@@ -1,0 +1,5 @@
+_target_: gotennet.data.components.rdb7.RDB7DataModule
+
+data_file: ${paths.data_dir}/RDB7/processed_data/data.pkl # data_path is specified in config.yaml
+split_path: ${paths.data_dir}/RDB7/splits
+batch_size: 200

@@ -1,0 +1,4 @@
+# @package _global_
+model:
+  representation:
+    n_atom_basis: 256

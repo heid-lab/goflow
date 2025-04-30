@@ -1,0 +1,42 @@
+_target_: flow_matching.flow_module.FlowModule
+#label: ${label}
+#task: ${task}
+
+#cutoff: 5.0
+lr: 0.0005
+lr_decay: 0.8
+lr_patience: 5
+lr_monitor: "validation/ema_loss"
+ema_decay: 0.9
+weight_decay: 0.01
+
+num_steps: 25
+num_samples: 50
+seed: 1
+
+output:
+  n_hidden: 64
+
+representation:
+  _target_: gotennet.models.representation.gotennet.GotenNet
+  n_atom_basis: 128
+  n_atom_rdkit_feats: 27
+  n_interactions: 3
+  n_rbf: 20
+  cutoff_fn:
+    _target_: gotennet.models.components.ops.CosineCutoff
+    cutoff: 5.0
+  radial_basis: 'expnorm'
+  activation: "swish"
+  max_z: 100
+  weight_init: "xavier_uniform"
+  bias_init: "zeros"
+  int_layer_norm: ""
+  int_vector_norm: ""
+  num_heads: 8
+  attn_dropout: 0.1
+  edge_updates: 'norej'
+  aggr: "add"
+  edge_ln: ''
+  sep_int_vec: True
+  lmax: 2

@@ -1,0 +1,4 @@
+- model.num_steps=25
+- model.num_samples=50
+- task_name=train_test_all_model_sizes
+- experiment=flow5

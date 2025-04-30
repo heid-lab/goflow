@@ -1,0 +1,119 @@
+data:
+  _target_: gotennet.data.components.rdb7.RDB7DataModule
+  data_file: ${paths.data_dir}/RDB7/processed_data/data.pkl
+  split_path: ${paths.data_dir}/RDB7/splits
+  batch_size: 200
+  split_file: random_split.pkl
+model:
+  _target_: flow_matching.flow_module.FlowModule
+  lr: 0.0005
+  lr_decay: 0.8
+  lr_patience: 5
+  lr_monitor: validation/ema_loss
+  ema_decay: 0.9
+  weight_decay: 0.01
+  num_steps: 25
+  num_samples: 25
+  seed: ${seed}
+  output:
+    n_hidden: 64
+  representation:
+    _target_: gotennet.models.representation.gotennet.GotenNet
+    n_atom_basis: 256
+    n_atom_rdkit_feats: 27
+    n_interactions: 3
+    n_rbf: 20
+    cutoff_fn:
+      _target_: gotennet.models.components.ops.CosineCutoff
+      cutoff: 5.0
+    radial_basis: expnorm
+    activation: swish
+    max_z: 100
+    weight_init: xavier_uniform
+    bias_init: zeros
+    int_layer_norm: ''
+    int_vector_norm: ''
+    num_heads: 8
+    attn_dropout: 0.1
+    edge_updates: norej
+    aggr: add
+    edge_ln: ''
+    sep_int_vec: true
+    lmax: 2
+  filter_clash: false
+callbacks:
+  model_checkpoint:
+    _target_: lightning.pytorch.callbacks.ModelCheckpoint
+    dirpath: ${paths.output_dir}/checkpoints
+    filename: epoch_{epoch:03d}
+    monitor: validation/val_loss
+    verbose: false
+    save_last: true
+    save_top_k: 1
+    mode: min
+    auto_insert_metric_name: false
+    save_weights_only: false
+    every_n_train_steps: null
+    train_time_interval: null
+    every_n_epochs: null
+    save_on_train_epoch_end: null
+  early_stopping:
+    _target_: lightning.pytorch.callbacks.EarlyStopping
+    monitor: validation/ema_loss
+    min_delta: 1.0e-06
+    patience: 25
+    verbose: false
+    mode: min
+    strict: true
+    check_finite: true
+    stopping_threshold: null
+    divergence_threshold: null
+    check_on_train_epoch_end: null
+  model_summary:
+    _target_: lightning.pytorch.callbacks.RichModelSummary
+    max_depth: 5
+  rich_progress_bar:
+    _target_: lightning.pytorch.callbacks.RichProgressBar
+  ema_loss:
+    _target_: gotennet.models.components.callbacks.EMALossCallback
+    alpha: 0.9
+    soft_beta: 2.5
+  test_and_save_after_training:
+    _target_: gotennet.models.components.callbacks.TestAndSaveResultsAfterTrainingCallback
+    save_path: ${hydra:runtime.output_dir}
+    runs_stats_path: ${paths.log_dir}/${task_name}
+logger:
+  wandb:
+    _target_: lightning.pytorch.loggers.WandbLogger
+    project: ${project}
+    name: ${task_name}
+trainer:
+  _target_: lightning.pytorch.trainer.Trainer
+  default_root_dir: ${paths.output_dir}
+  min_epochs: 1
+  max_epochs: 650
+  accelerator: gpu
+  devices: 1
+  check_val_every_n_epoch: 1
+  deterministic: false
+  gradient_clip_val: 5.0
+paths:
+  root_dir: .
+  data_dir: ${paths.root_dir}/data/
+  log_dir: ${paths.root_dir}/logs/
+  test_predictions_filepath: ${paths.log_dir}/test/multiruns/${now:%Y-%m-%d}_${now:%H-%M-%S}
+  output_dir: ${hydra:runtime.output_dir}
+  work_dir: ${hydra:runtime.cwd}
+extras:
+  ignore_warnings: false
+  enforce_tags: true
+  print_config: true
+project: flow-matching-gotennet
+task_name: train_test_error_bar
+tags:
+- dev
+train: true
+test: true
+custom_model_weight_path: logs/eval/runs/2025-04-08_14-23-27/checkpoints/epoch_347.ckpt
+ckpt_path: null
+seed: 6

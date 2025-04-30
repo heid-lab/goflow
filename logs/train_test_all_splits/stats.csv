@@ -1,0 +1,4 @@
+split,mae,rmse,angle_error,dihedral_error,steric_clash,time,num_steps,num_samples
+rxn core,0.138,0.546,5.000,38.980,-1.927,0.131,25.000,25.000
+barrier height,0.149,0.546,5.630,39.369,20.841,0.130,25.000,25.000
+random,0.107,0.522,3.562,37.257,6.063,0.133,25.000,25.000

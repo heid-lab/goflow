@@ -1,0 +1,4 @@
+- data.split_file=rxn_core_split.pkl
+- model.num_steps=25
+- model.num_samples=25
+- task_name=train_test_all_splits

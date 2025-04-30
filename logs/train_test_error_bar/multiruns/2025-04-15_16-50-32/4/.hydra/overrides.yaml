@@ -1,0 +1,4 @@
+- seed=5
+- model.num_steps=25
+- model.num_samples=25
+- task_name=train_test_error_bar

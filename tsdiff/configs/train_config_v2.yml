@@ -1,0 +1,60 @@
+model:
+  type: diffusion
+  network: condensenc_rtsp
+  output_mode: ts
+  t0: 0
+  t1: 5000
+
+  edge_cutoff: 10.0
+  edge_order: 4
+  pred_edge_order: 3
+  encoder:
+    name: schnet
+    edge_emb: False
+    num_convs: 7
+    cutoff: 10.0
+    smooth_conv: False
+    mlp_act: swish
+    hidden_dim: 256
+
+  # atom/edge embedding
+  feat_dim: 27
+  hidden_dim: 256
+  edge_encoder: mlp
+
+  # energy prediction
+  loss_energy_weight: 0.4
+
+  # grad dist mlp/condensed edge_cat
+  mlp_act: swish
+  edge_cat_act: swish
+
+  # diffusion process
+  beta_schedule: sigmoid
+  beta_start: 1.e-7
+  beta_end: 2.e-3
+  num_diffusion_timesteps: 5000
+
+train:
+  seed: 1
+  # total training data : 26148
+  batch_size: 128
+  val_freq: 200
+  log_freq: 200
+  max_iters: 40000 #5000 * 100
+  max_grad_norm: 3000.0  # Different from QM9
+  anneal_power: 2.0
+  optimizer:
+    type: adam
+    lr: 5.e-4
+    weight_decay: 0.
+    beta1: 0.95
+    beta2: 0.999
+  scheduler:
+    type: plateau
+    factor: 0.8
+    patience: 10
+    min_lr: 0.000125
+
+dataset:
+  data: data/RDB7/processed_data/data.pkl
