@@ -23,9 +23,9 @@ The dataset used to train and evaluate GoFlow is the open-source [RDB7 database]
 
 The raw `.csv` and `.xyz` files are found in the `data/RDB7/raw_data` directory. The processed data, i.e. each reaction saved as [PyG](https://pytorch-geometric.readthedocs.io/) object in a Python list, is found in the `data/RDB7/processed_data` directory in the `data.pkl` file.
 
-Indices for the random, reaction core, and barrier height dataset splits are found in the `data/RDB7/splits` directory.
+The data is preprocessed by running the `preprocessing.sh` shell script. This generates the `data.pkl` file. Inside the script, edit the paths to the `csv` and `xyz` files as needed.
 
-The data is preprocessed by running the `preprocessing.sh` shell script. Inside the script, edit the paths to the `csv` and `xyz` files as needed.
+Indices for the random, reaction core, and barrier height dataset splits are found in the `data/RDB7/splits` directory. You can generate those by first running the `preprocess_extract_rxn_core.sh` script, then `preprocess_create_splits.sh`.
 
 ## Usage
 Each experiment has a separate shell script (.sh files).
