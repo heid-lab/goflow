@@ -6,8 +6,4 @@
 #SBATCH --job-name=train_test_error_bar
 #SBATCH --output=%x-%j.out
 
-cd /home/leonard.galustian/projects/fm-gotennet || exit
-
-mamba activate gotennet
-
-python flow_train.py -m seed=1,2,3,4,5,6,7,8 model.num_steps=25 model.num_samples=25 task_name=train_test_error_bar
+uv run flow_train.py -m seed=1,2,3,4,5,6,7,8 model.num_steps=25 model.num_samples=25 task_name=train_test_error_bar

@@ -4,13 +4,14 @@ GoFlow is an open-source model for predicting transition state geometries of sin
 This repository contains the official implementation, including all scripts to fully reproduce the results reported in the paper.
 
 ## Installation
-Install GoFlow dependencies with Conda (recommended):
+Install GoFlow dependencies with uv (recommended):
 
 ```bash
-# Create environment
-conda env create -f environment.yml
-# Activate environment
-conda activate goflow
+# Install uv
+pip install uv
+# Install dependencies
+uv sync -n
+uv add torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-2.6.0+cu124.html --no-build-isolation -n
 ```
 
 ## Configuration
