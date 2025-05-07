@@ -11,6 +11,8 @@ from rdkit import RDLogger
 
 RDLogger.DisableLog("rdApp.*")
 
+from utils.chem import BOND_TYPES, mol_to_smiles
+
 
 def read_xyz_block(xyz_block):
     sxyz = xyz_block.split("\n")[2:]
