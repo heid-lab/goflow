@@ -32,15 +32,15 @@ To set up the dataset when using the repository for the first time, follow these
 
 5. Preprocess the data by executing the `preprocessing.sh` script. This will generate the `data.pkl` file. Make sure to adjust the paths to the `.csv` and `.xyz` files inside the script as needed.
 
-The processed data, i.e. each reaction, is stored as a [PyG](https://pytorch-geometric.readthedocs.io/) object in a Python list will be available in the `data/RDB7/processed_data` directory as `data.pkl`.
+The processed data, i.e., each reaction, is stored as a [PyG](https://pytorch-geometric.readthedocs.io/) object in a Python list and is located in the `data/RDB7/processed_data` directory as `data.pkl`.
 
 
 ## Usage
 Each experiment has a separate shell script (.sh files).
 
-E.g. to train and test the model for all dataset splits run `bash train_test_all_splits.sh` in a unix shell.
+E.g. to train and test the model for all dataset splits, run `bash train_test_all_splits.sh` in a Unix shell.
 
-Modify the shell scripts as required to set custom paths for your input and output directories. Also edit the configuration files as needed.
+Modify the shell scripts as required to set custom paths for your input and output directories. Also, edit the configuration files as needed.
 
 ## Acknowledgement
 
