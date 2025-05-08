@@ -19,21 +19,28 @@ We use [Hydra](https://hydra.cc/) for managing model configurations and experime
 
 All hyper-parameters are found in the configs directory and its subdirectories (`./configs`).
 
+
 ## Dataset
-The dataset used to train and evaluate GoFlow is the open-source [RDB7 database](https://zenodo.org/records/13328872) by [Spiekermann et al.](https://www.nature.com/articles/s41597-022-01529-6)
 
-The raw `.csv` and `.xyz` files are found in the `data/RDB7/raw_data` directory. The processed data, i.e. each reaction saved as [PyG](https://pytorch-geometric.readthedocs.io/) object in a Python list, is found in the `data/RDB7/processed_data` directory in the `data.pkl` file.
+GoFlow is trained and evaluated on the open-source [RDB7 database](https://zenodo.org/records/13328872) by [Spiekermann et al.](https://www.nature.com/articles/s41597-022-01529-6). The raw `.csv` and `.xyz` files are located in the `data/RDB7/raw_data` directory.
 
-The data is preprocessed by running the `preprocessing.sh` shell script. This generates the `data.pkl` file. Inside the script, edit the paths to the `csv` and `xyz` files as needed.
+To set up the dataset when using the repository for the first time, follow these steps:
 
-Indices for the random, reaction core, and barrier height dataset splits are found in the `data/RDB7/splits` directory. You can generate those by first running the `preprocess_extract_rxn_core.sh` script, then `preprocess_create_splits.sh`.
+1. Generate indices required for creating the dataset splits by running the `preprocess_extract_rxn_core.sh` script.
+
+3. Create split files by running the `preprocess_create_splits.sh` script, which produces `.pkl` files containing the split indices.
+
+5. Preprocess the data by executing the `preprocessing.sh` script. This will generate the `data.pkl` file. Make sure to adjust the paths to the `.csv` and `.xyz` files inside the script as needed.
+
+The processed data, i.e., each reaction, is stored as a [PyG](https://pytorch-geometric.readthedocs.io/) object in a Python list and is located in the `data/RDB7/processed_data` directory as `data.pkl`.
+
 
 ## Usage
 Each experiment has a separate shell script (.sh files).
 
-E.g. to train and test the model for all dataset splits run `bash train_test_all_splits.sh` in a unix shell.
+E.g. to train and test the model for all dataset splits, run `bash train_test_all_splits.sh` in a Unix shell.
 
-Modify the shell scripts as required to set custom paths for your input and output directories. Also edit the configuration files as needed.
+Modify the shell scripts as required to set custom paths for your input and output directories. Also, edit the configuration files as needed.
 
 ## Acknowledgement
 

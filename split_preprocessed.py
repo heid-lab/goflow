@@ -4,6 +4,7 @@ import pickle
 import argparse
 import ast
 import random
+import os
 from pathlib import Path
 from collections import defaultdict
 
@@ -40,6 +41,8 @@ def rxn_random_split(args):
     
     test_no_data_leakage(split_dict, set(all_indices))
     
+    if not os.path.isdir(args.output_rxn_indices_path):
+        os.makedirs(args.output_rxn_indices_path)
     # Save to pickle file
     with open(Path(args.output_rxn_indices_path) / Path('random_split.pkl'), 'wb') as f:
         pickle.dump(split_dict, f)
