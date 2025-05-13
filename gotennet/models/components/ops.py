@@ -1,5 +1,3 @@
-"""  """
-
 from __future__ import print_function, absolute_import, division
 
 import inspect
@@ -147,16 +145,17 @@ class PolynomialCutoff(nn.Module):
 
 
 class CosineCutoff(nn.Module):
-    def __init__(self, cutoff):
+    def __init__(self, cutoff, scaling):
         super(CosineCutoff, self).__init__()
 
         if isinstance(cutoff, torch.Tensor):
             cutoff = cutoff.item()
         self.cutoff = cutoff
+        self.scaling = scaling
 
     def forward(self, distances):
         cutoffs = 0.5 * (torch.cos(distances * math.pi / self.cutoff) + 1.0)
-        return cutoffs * (distances < self.cutoff).float()
+        return self.scaling * cutoffs * (distances < self.cutoff).float()
 
 
 class ScaleShift(nn.Module):
@@ -1387,7 +1386,7 @@ def str2act(input_str, *args, **kwargs):
 
 
 class ExpNormalSmearing(nn.Module):
-    def __init__(self, cutoff=5.0, n_rbf=50, trainable=False):
+    def __init__(self, cutoff=5.0, scaling=1.0, n_rbf=50, trainable=False):
         super(ExpNormalSmearing, self).__init__()
         if isinstance(cutoff, torch.Tensor):
             cutoff = cutoff.item()
@@ -1395,7 +1394,7 @@ class ExpNormalSmearing(nn.Module):
         self.n_rbf = n_rbf
         self.trainable = trainable
 
-        self.cutoff_fn = CosineCutoff(cutoff)
+        self.cutoff_fn = CosineCutoff(cutoff, scaling)
         self.alpha = 5.0 / cutoff
 
         means, betas = self._initial_params()
@@ -1448,8 +1447,6 @@ class MLP(nn.Module):
                  norm='',
                  ):
         super().__init__()
-
-        # hidden_dims = [hidden, half, hidden]
 
         dims = hidden_dims
         n_layers = len(dims)
@@ -1513,7 +1510,6 @@ class AtomCGREmbedding(nn.Module):
         af_emb_p = self.atom_feat_embedding(p_feat_N_F.float())
         z1 = a_emb + af_emb_r
         z2 = af_emb_p - af_emb_r
-        # return torch.cat([z1, z2], dim=-1)
         return rearrange([z1, z2], 'a n d -> n (a d)', a=2, d=self.half_last_channel_dim)
 
 
@@ -1540,12 +1536,11 @@ class EdgeCGREmbedding(nn.Module):
     def forward(self, edge_type_r, edge_type_p):
         edge_attr_r = self.bond_emb(edge_type_r)
         edge_attr_p = self.bond_emb(edge_type_p)
-        # return self.edge_cat(torch.cat([edge_attr_r, edge_attr_p], dim=-1))
         return self.edge_cat(rearrange([edge_attr_r, edge_attr_p], 'a e d -> e (a d)', a=2, d=self.hidden_dim))
 
 
 class NodeInit(MessagePassing):
-    def __init__(self, hidden_channels, n_atom_rdkit_feats, num_rbf, cutoff, max_z=100, activation=F.silu, proj_ln='',
+    def __init__(self, hidden_channels, n_atom_rdkit_feats, num_rbf, cutoff, scaling, max_z=100, activation=F.silu, proj_ln='',
                  last_activation=False, weight_init=nn.init.xavier_uniform_, bias_init=nn.init.zeros_,
                  concat=False):
         super().__init__(aggr="add")
@@ -1556,15 +1551,12 @@ class NodeInit(MessagePassing):
         first_channel = hidden_channels[0]
         last_channel = hidden_channels[-1]
 
-        # DenseInit = partial(Dense, weight_init=weight_init, bias_init=bias_init)
 
         self.concat = concat
-        # self.embedding = nn.Embedding(max_z, last_channel)
         self.atom_cgr_embedding = AtomCGREmbedding(n_atom_rdkit_feats, last_channel)
         self.edge_cgr_embedding = EdgeCGREmbedding(last_channel)
 
         if self.concat:
-            # self.embedding_src = nn.Embedding(max_z, first_channel)
             self.atom_cgr_embedding_src = AtomCGREmbedding(n_atom_rdkit_feats, last_channel)
             self.distance_proj = MLP([num_rbf + 2 * first_channel] + hidden_channels, activation=activation,
                                      norm=proj_ln, weight_init=weight_init, bias_init=bias_init,
@@ -1578,38 +1570,28 @@ class NodeInit(MessagePassing):
             self.combine = MLP([2 * last_channel] + hidden_channels, activation=activation, norm=proj_ln,
                                weight_init=weight_init, bias_init=bias_init,
                                last_activation=activation if last_activation else None)
-        self.cutoff = CosineCutoff(cutoff)
+        self.cutoff = CosineCutoff(cutoff, scaling)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        # self.atom_cgr_embedding.reset_parameters()
-        # self.edge_cgr_embedding.reset_parameters()
         self.distance_proj.reset_parameters()
-        if self.concat:
-            # self.atom_cgr_embedding_src.reset_parameters()
-            pass
-        else:
+        if not self.concat:
             self.combine.reset_parameters()
 
-    # def forward(self, z, x, edge_index, edge_weight, edge_attr):
     def forward(self, z, r_feat, p_feat, x, edge_index, edge_weight, edge_attr, edge_type_r, edge_type_p):
-        # remove self loops
         mask = edge_index[0] != edge_index[1]
         if not mask.all():
             edge_index = edge_index[:, mask]
             edge_weight = edge_weight[mask]
             edge_attr = edge_attr[mask]
 
-        # x_neighbors = self.embedding(z)
         x_neighbors = self.atom_cgr_embedding(z, r_feat, p_feat)
         if not self.concat:
             C = self.cutoff(edge_weight)
-            # W = self.distance_proj(edge_attr) * C.view(-1, 1)
             W = self.edge_cgr_embedding(edge_type_r, edge_type_p) * self.distance_proj(edge_attr) * C.view(-1, 1)
             x_src = x_neighbors
         else:
-            # x_src = self.embedding_src(z)
             x_src = self.atom_cgr_embedding_src(z, r_feat, p_feat)
             W = edge_attr
         # propagate_type: (x: Tensor, s:Tensor, W: Tensor)
@@ -1659,12 +1641,4 @@ class EdgeInit(MessagePassing):
             We use the edge features (bond type) that we have already given.
         """
         # propagate_type: (x: Tensor, edge_attr: Tensor)
-        # return self.propagate(edge_index, x=x, edge_attr=edge_attr)
         return self.edge_cgr_embedding(edge_type_r, edge_type_p) * self.edge_up(edge_attr)
-
-    # def message(self, edge_attr):
-    #    return self.edge_cgr_embedding() * self.edge_up(edge_attr)
-
-    # def aggregate(self, features, index):
-    #    # no aggregate
-    #    return features
