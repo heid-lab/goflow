@@ -55,7 +55,7 @@ class GATA(MessagePassing):
     def __init__(self, n_atom_basis: int, activation: Callable, weight_init=nn.init.xavier_uniform_,
                  bias_init=nn.init.zeros_,
                  aggr="add", node_dim=0, epsilon: float = 1e-7,
-                 layer_norm="", vector_norm="", cutoff=5.0, num_heads=8, dropout=0.0,
+                 layer_norm="", vector_norm="", cutoff=5.0, scaling=1.0, num_heads=8, dropout=0.0,
                  edge_updates=True, last_layer=False, scale_edge=True,
                  edge_ln='', evec_dim=None, emlp_dim=None, sep_vecj=True, lmax=1):
         """
@@ -135,7 +135,7 @@ class GATA(MessagePassing):
 
         self.down_proj = nn.Identity()
 
-        self.cutoff = CosineCutoff(cutoff)
+        self.cutoff = CosineCutoff(cutoff, scaling)
         self._alpha = None
 
         self.w_re = InitDense(
@@ -169,8 +169,6 @@ class GATA(MessagePassing):
         self.k_w.reset_parameters()
         for l in self.gamma_v:
             l.reset_parameters()
-        # self.v_w.reset_parameters()
-        # self.out_w.reset_parameters()
         self.w_re.reset_parameters()
 
         if not self.last_layer and self.edge_updates:
@@ -186,15 +184,7 @@ class GATA(MessagePassing):
             if self.update_info["lin_w"] > 0:
                 self.lin_w_linear.reset_parameters()
 
-    # q, mu, edge_attr = interaction(
-    #                               edge_index, 
-    #                               q, 
-    #                               mu, => torch.zeros((#nodes, (l+1)**2-1, node/h-hidden-dim]))
-    #                               dir_ij=edge_vec, 
-    #                               r_ij=edge_attr, 
-    #                               d_ij=edge_weight, 
-    #                               num_edges_expanded=num_edges_expanded
-    # )
+
     def forward(
             self,
             edge_index,
@@ -303,8 +293,6 @@ class GATA(MessagePassing):
 
     @staticmethod
     def rej(vec, d_ij):
-        # vec_proj = (vec * d_ij.unsqueeze(2)).sum(dim=1, keepdim=True)
-        # return vec - vec_proj * d_ij.unsqueeze(2)
         d_ij_1 = rearrange(d_ij, 'b l -> b l 1')
         vec_proj = reduce(vec * d_ij_1, 'b l c -> b 1 c', 'sum')
         return vec - vec_proj * d_ij_1
@@ -407,7 +395,6 @@ class EQFF(nn.Module):
         for l in self.gamma_m:
             l.reset_parameters()
 
-    # naming is ridiculously bad
     # s: h in paper (node scalar features): [nodes, n_atom_basis]
     # v: X^(l) in paper (node higher-order features): [nodes, (l+1)**2, n_atom_basis]
     def forward(self, s, v):
@@ -511,12 +498,13 @@ class GotenNet(nn.Module):
         self.n_interactions = n_interactions
         self.cutoff_fn = cutoff_fn
         self.cutoff = cutoff_fn.cutoff
+        self.scaling = cutoff_fn.scaling
         self.edge_order = edge_order
 
         self.distance = Distance(self.cutoff, max_num_neighbors=max_num_neighbors, loop=True)
 
         self.neighbor_embedding = NodeInit([self.hidden_dim // 2, self.hidden_dim], n_atom_rdkit_feats, n_rbf,
-                                           self.cutoff, max_z=max_z,
+                                           self.cutoff, self.scaling, max_z=max_z,
                                            weight_init=weight_init, bias_init=bias_init, concat=False,
                                            proj_ln='layer', activation=activation).jittable()
         self.edge_embedding = EdgeInit(n_rbf, [self.hidden_dim // 2, self.hidden_dim], weight_init=weight_init,
@@ -526,9 +514,8 @@ class GotenNet(nn.Module):
         self.time_embedding = TimestepEmbedding(128, 128, self.hidden_dim)
 
         radial_basis = str2basis(radial_basis)
-        self.radial_basis = radial_basis(cutoff=self.cutoff, n_rbf=n_rbf)
+        self.radial_basis = radial_basis(cutoff=self.cutoff, scaling=self.scaling, n_rbf=n_rbf)
 
-        # self.embedding = nn.Embedding(max_z, n_atom_basis, padding_idx=0)
         self.atom_cgr_embedding = AtomCGREmbedding(n_atom_rdkit_feats, n_atom_basis)
         self.edge_cgr_embedding = EdgeCGREmbedding(self.hidden_dim)
 
@@ -538,7 +525,7 @@ class GotenNet(nn.Module):
             GATA(
                 n_atom_basis=self.n_atom_basis, activation=activation, aggr=aggr,
                 weight_init=weight_init, bias_init=bias_init,
-                layer_norm=int_layer_norm, vector_norm=int_vector_norm, cutoff=self.cutoff, epsilon=epsilon,
+                layer_norm=int_layer_norm, vector_norm=int_vector_norm, cutoff=self.cutoff, scaling=self.scaling, epsilon=epsilon,
                 num_heads=num_heads, dropout=attn_dropout,
                 edge_updates=edge_updates, last_layer=(i == self.n_interactions - 1),
                 scale_edge=scale_edge, edge_ln=edge_ln,
@@ -586,17 +573,12 @@ class GotenNet(nn.Module):
         edge_index, _, edge_type_r, edge_type_p = _extend_condensed_graph_edge(x_t_N_3, edge_index, edge_type, batch,
                                                                                cutoff=self.cutoff,
                                                                                edge_order=self.edge_order)
-        # r_ij: B, dir_ij: B,3
-        # r_ij, dir_ij = inputs.rij, inputs.dir_ij
 
         edge_vec = x_t_N_3[edge_index[0]] - x_t_N_3[edge_index[1]]
         edge_weight = torch.norm(edge_vec, dim=-1)
         edge_attr = self.radial_basis(edge_weight)
 
-        # q = self.embedding(atom_type)[:]
         q = self.atom_cgr_embedding(atom_type, r_feat, p_feat)
-        # q = self.neighbor_embedding(atomic_numbers, q, edge_index, edge_weight, edge_attr)
-        # q = self.neighbor_embedding(atom_type, q, edge_index, edge_weight, edge_attr, r_feat, p_feat)
         q = self.neighbor_embedding(atom_type, r_feat, p_feat, q, edge_index, edge_weight, edge_attr, edge_type_r,
                                     edge_type_p)
         t_emb_G = self.time_embedding(t_G)
@@ -605,7 +587,6 @@ class GotenNet(nn.Module):
         t_emb_N = t_emb_G[batch]
         q = q + t_emb_N
 
-        # edge_attr = self.edge_embedding(edge_index, edge_attr, q)
         edge_emb = self.edge_embedding(edge_index, edge_attr, edge_type_r, edge_type_p)
         edge_emb_t = edge_emb + t_emb_N[edge_index[0]]
         assert torch.allclose(t_emb_N[edge_index[0]], t_emb_N[edge_index[1]])
