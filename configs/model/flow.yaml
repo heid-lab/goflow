@@ -2,7 +2,6 @@ _target_: flow_matching.flow_module.FlowModule
 #label: ${label}
 #task: ${task}
 
-#cutoff: 5.0
 lr: 0.0005
 lr_decay: 0.8
 lr_patience: 5
@@ -26,6 +25,7 @@ representation:
   cutoff_fn:
     _target_: gotennet.models.components.ops.CosineCutoff
     cutoff: 5.0
+    scaling: 0.5
   radial_basis: 'expnorm'
   activation: "swish"
   max_z: 100
