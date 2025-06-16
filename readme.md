@@ -42,6 +42,8 @@ E.g. to train and test the model for all dataset splits, run `bash train_test_al
 
 Modify the shell scripts as required to set custom paths for your input and output directories. Also, edit the configuration files as needed.
 
+To run quantum mechanical saddle point optimizations, use the `tsopt.inp` script for ORCA together with a predicted transition state geometry (xyz file).
+
 ## Acknowledgement
 
 GoFlow is built upon open-source code provided by [TsDiff](https://github.com/seonghann/tsdiff) and [GotenNet](https://github.com/sarpaykent/GotenNet).

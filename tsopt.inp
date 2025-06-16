@@ -1,0 +1,17 @@
+! wB97X D4 def2-TZVP OptTS FREQ
+
+%maxcore 1500
+%pal
+  nprocs 2
+end
+
+%scf
+  Convergence Tight
+  MaxIter 500
+end
+
+%geom
+  MaxIter 500
+end
+
+* xyzfile 0 1 [xyz-file]
