@@ -12,6 +12,7 @@ weight_decay: 0.01
 num_steps: 25
 num_samples: 50
 seed: 1
+save_all_samples: True
 
 output:
   n_hidden: 64
