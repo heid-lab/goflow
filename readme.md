@@ -40,6 +40,8 @@ Each experiment has a separate shell script (.sh files).
 
 E.g. to train and test the model for all dataset splits, run `bash train_test_all_splits.sh` in a Unix shell.
 
+To compute all evaluation metrics on a given test set that are provided in the paper, run the `test_samples_analysis.py` script with the required input and output file arguments.
+
 Modify the shell scripts as required to set custom paths for your input and output directories. Also, edit the configuration files as needed.
 
 To run quantum mechanical saddle point optimizations, use the `tsopt.inp` script for ORCA together with a predicted transition state geometry (xyz file).
