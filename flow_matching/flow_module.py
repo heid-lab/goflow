@@ -38,6 +38,7 @@ class FlowModule(pl.LightningModule):
             lr_warmup_steps: int = 0,
             schedule_free: bool = False,
             use_ema: bool = False,
+            save_all_samples: bool = True,
             **kwargs
     ):
         super().__init__()
@@ -62,6 +63,7 @@ class FlowModule(pl.LightningModule):
         self.chain_scheduler = chain_scheduler
         self.input_contribution = input_contribution
         self.save_predictions = save_predictions
+        self.save_all_samples = save_all_samples
 
         self.lambda_cf = 0.0
         self.seed = seed
@@ -145,6 +147,8 @@ class FlowModule(pl.LightningModule):
             # -------------------------- END: Aggregate the S samples --------------------------
 
             data.pos_gen = pos_best_T_Nm_3
+            if self.save_all_samples:
+                data.pos_gen_all_samples_S_N_3 = pos_gen_traj_Sv_T_Nm_3[:,-1,:,:]
             self.results_R.append(data.to("cpu"))
 
     def align_and_rotate_samples(self, data, pos_gen_traj_S_T_Nm_3):
