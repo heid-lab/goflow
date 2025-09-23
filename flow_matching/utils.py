@@ -2,13 +2,91 @@ import torch
 from torch import Tensor
 import numpy as np
 
+from ase.calculators.lj import LennardJones
+from ase.calculators.emt import EMT
 from ase import Atoms
 
 from rdkit import Chem
 from rdkit.Chem import rdDetermineBonds
 from rdkit.Geometry import Point3D
+from torch_geometric.data import Data
 
+from flow_matching.chirality_forces import get_pseudoforces_batch
 from scipy.spatial.distance import cdist
+
+from rdkit.Chem import AllChem
+from scipy.spatial.distance import cdist
+
+from pymatgen.core import Molecule
+from pymatgen.analysis.molecule_matcher import BruteForceOrderMatcher, GeneticOrderMatcher, HungarianOrderMatcher, KabschMatcher
+
+
+def rmsd_core(mol1, mol2, threshold=0.5, same_order=False):
+    _, count = np.unique(mol1.atomic_numbers, return_counts=True)
+    if same_order:
+        bfm = KabschMatcher(mol1)
+        _, rmsd = bfm.fit(mol2)
+        return rmsd
+    total_permutations = 1
+    for c in count:
+        total_permutations *= np.math.factorial(c)  # type: ignore
+    if total_permutations < 1e4:
+        bfm = BruteForceOrderMatcher(mol1)
+        _, rmsd = bfm.fit(mol2)
+    else:
+        bfm = GeneticOrderMatcher(mol1, threshold=threshold)
+        pairs = bfm.fit(mol2)
+        rmsd = threshold
+        for pair in pairs:
+            rmsd = min(rmsd, pair[-1])
+        if not len(pairs):
+            bfm = HungarianOrderMatcher(mol1)
+            _, rmsd = bfm.fit(mol2)
+    return rmsd
+
+def pymatgen_rmsd(
+    mol1,
+    mol2,
+    ignore_chirality: bool = False,
+    threshold: float = 0.5,
+    same_order: bool = True,
+):
+    rmsd = rmsd_core(mol1, mol2, threshold, same_order=same_order)
+    if ignore_chirality:
+        coords = mol2.cart_coords
+        coords[:, -1] = -coords[:, -1]
+        mol2_reflect = Molecule(
+            species=mol2.species,
+            coords=coords,
+        )
+        rmsd_reflect = rmsd_core(
+            mol1, mol2_reflect, threshold, same_order=same_order)
+        rmsd = min(rmsd, rmsd_reflect)
+    return rmsd
+
+
+def match_and_compute_rmsd(data, rtsp_i=1):
+    mol_pred = Molecule(
+        species=data.atom_type.long().cpu().numpy(),
+        coords=data.pos_gen[-1].cpu().numpy(),
+    )
+    mol_ref = Molecule(
+        species=data.atom_type.long().cpu().numpy(),
+        coords=data.pos[:,1,:].cpu().numpy(),
+    )
+    try:
+        rmsd = pymatgen_rmsd(
+            mol_pred,
+            mol_ref,
+            ignore_chirality=True,
+            threshold=0.5,
+            same_order=False,
+        )
+    except:
+        pred_pos_N_3, gt_pos_N_3 = pred_atom_index_align(data.smiles, data.pos[:, rtsp_i, :], data.pos_gen[-1])
+        rmsd = rmsd_loss(pred_pos_N_3, gt_pos_N_3)
+
+    return rmsd
 
 
 def compute_steric_clash_penalty(
@@ -19,8 +97,11 @@ def compute_steric_clash_penalty(
     potential which only includes the repulsive 12-term. For any pair of atoms,
     if the distance r satisfies r < r_threshold then we add a penalty:
 
-        V(r) = epsilon * [(r_threshold / r)^12 - 1]    for r < r_threshold
+        V(r) = epsilon * [(r_threshold / r)^{12} - 1]    for r < r_threshold
         V(r) = 0                                          for r >= r_threshold
+
+    The default r_threshold of 1.2 Å is chosen based on the observation that the
+    shortest possible bond (C-C triple bond) is around this length.
 
     Parameters:
         coords_N_3 (torch.Tensor): Tensor of shape (N,3) with 3D positions.
@@ -52,11 +133,11 @@ def create_ase_molecule(atomic_numbers: np.ndarray, positions: np.ndarray):
 
     return Atoms(numbers=atomic_numbers, positions=positions)
 
-def rmsd_loss(pred_N_3, gt_N_3):
-    return torch.linalg.vector_norm(pred_N_3 - gt_N_3, dim=1).mean()
-
 def rmsd_median_loss(pred_N_3, gt_N_3):
     return torch.median(torch.linalg.vector_norm(pred_N_3 - gt_N_3, dim=1))
+
+def rmsd_loss(pred_N_3: Tensor, gt_N_3: Tensor) -> Tensor:
+    return torch.sqrt(torch.mean((pred_N_3 - gt_N_3) ** 2))
 
 def get_shortest_path_fast_batched_x_1(x_0_N_3, x_1_N_3, batch):
     # x_0_N_3, x_1_N_3 are tensors of shape (N, 3)
@@ -108,7 +189,8 @@ def get_shortest_path_fast_batched_x_1(x_0_N_3, x_1_N_3, batch):
 
     return x1_aligned_N_3
 
-def get_shortest_path_x_1(x_0_N_3, x_1_N_3):
+
+def get_shortest_path_x_1_(x_0_N_3, x_1_N_3):
     """
     Find the rotation matrix R such that the distance of the (Nx3) matrix of ground truth(GT) atomic positions x_1_N_3 rotated with R
     to the random atomic positions x_0_N_3 is minimized. More formally:
@@ -140,6 +222,55 @@ def get_shortest_path_x_1(x_0_N_3, x_1_N_3):
     # Add back the centroid of x_0
     x1_aligned = x1_centered_rotated + x0_center
     return x1_aligned
+
+
+@torch.no_grad()
+def get_shortest_path_x_1(
+    x_target_N_3: torch.Tensor,  # e.g., x0: (N,3) — fixed target
+    x_moving_N_3: torch.Tensor,  # e.g., x1: (N,3) — will be rotated/translated
+    return_aligned: bool = True
+):
+    """
+    Kabsch alignment: find R,t that minimize || (x_moving R + t) - x_target ||_F.
+    Returns R (3x3), t (3,), rmsd (scalar), and optionally the aligned coords.
+    """
+    assert x_moving_N_3.shape == x_target_N_3.shape and x_moving_N_3.shape[-1] == 3
+
+    # 1) center both point sets
+    c_moving_1_3 = x_moving_N_3.mean(dim=0, keepdim=True)  # (1,3)
+    c_target_1_3 = x_target_N_3.mean(dim=0, keepdim=True)  # (1,3)
+    X = x_moving_N_3 - c_moving_1_3                          # (N,3)
+    Y = x_target_N_3 - c_target_1_3                          # (N,3)
+
+    # 2) covariance and SVD
+    # Move "moving" onto "target": M = X^T Y
+    M_3_3 = X.transpose(0, 1) @ Y                            # (3,3)
+    U, S, Vt = torch.linalg.svd(M_3_3, full_matrices=False)  # U (3,3), Vt (3,3)
+
+    # 3) rotation (proper, no reflection)
+    V = Vt.transpose(0, 1)
+    R_3_3 = V @ U.transpose(0, 1)                            # (3,3)
+    if torch.det(R_3_3) < 0:
+        # flip last column of V (== last row of Vt) and recompute
+        V[:, -1] *= -1
+        R_3_3 = V @ U.transpose(0, 1)
+
+    # 4) translation so that (x_moving R + t) best matches x_target
+    # Using row-vector convention: x' = x R + t
+    t_3 = (c_target_1_3 - c_moving_1_3 @ R_3_3).squeeze(0)   # (3,)
+
+    # 5) rmsd
+    if return_aligned:
+        x_aligned_N_3 = x_moving_N_3 @ R_3_3 + t_3           # (N,3)
+        rmsd = torch.sqrt(torch.mean((x_aligned_N_3 - x_target_N_3) ** 2))
+        #return R_3_3, t_3, rmsd, x_aligned_N_3
+        return x_aligned_N_3
+    else:
+        # Equivalent RMSD via centered coords
+        X_rot = X @ R_3_3
+        rmsd = torch.sqrt(torch.mean((X_rot - Y) ** 2))
+        return R_3_3, t_3, rmsd
+        
 
 def remove_all_bonds(mol):
     rw_mol = Chem.RWMol(mol)
@@ -186,6 +317,15 @@ def is_correct_chirality(smiles: str, pos_gt_N_3: Tensor, pos_pred_N_3: Tensor):
     Chem.AssignStereochemistryFrom3D(m)
     pred_chiral_tags = [a.GetChiralTag() for a in m.GetAtoms()]
 
+    """
+    #tags inverted
+    new_xyz = m.GetConformer().GetPositions() * -1
+    for i in range(m.GetNumAtoms()):
+        x,y,z = new_xyz[i]
+        m.GetConformer().SetAtomPosition(i,Point3D(x,y,z))
+    Chem.AssignStereochemistryFrom3D(m)
+    pred_inv_chiral_tags = [a.GetChiralTag() for a in m.GetAtoms()]
+    """
     return not (False in [t1 == t2 for t1, t2 in zip(gt_chiral_tags, pred_chiral_tags)])
 
 
@@ -258,7 +398,6 @@ def pred_atom_index_align_mad(smiles, gt_atom_pos, pred_atom_pos) -> Tensor:
     match = get_min_dmae_match(matches, gt_atom_pos, pred_atom_pos)
     return pred_atom_pos[match]
 
-
 def calc_DMAE_torch(dm_ref, dm_guess, mape=False):
     """
     Compute the Distance Matrix Absolute Error (DMAE) between two distance matrices.
@@ -274,63 +413,16 @@ def calc_DMAE_torch(dm_ref, dm_guess, mape=False):
     return 2 * diff_upper.sum() / (N * (N - 1))
 
 
-def get_min_dmae_match_torch_batch(matches_M_N, pos_gt_N_3, pos_pred_S_N_3, mape=False):
-    """
-    Given a set of matches (each a tuple of indices), ground-truth positions (pos_gt_N_3), 
-    and S samples of predicted positions (pos_pred_S_N_3), compute the DMAE for each match
-    in each sample and return the match (as a list) with the minimal DMAE per sample.
-    
-    Args:
-        matches_M_N: list or tensor of candidate matches of shape (M, N)
-                     where M is the number of candidate matches and N is the number of atoms.
-        pos_gt_N_3:  tensor of ground-truth atom positions of shape (N, 3).
-        pos_pred_S_N_3: tensor of predicted atom positions for S samples (shape: S, N_total, 3)
-                        where N_total must be large enough to index by matches_M_N.
-        mape:        Boolean flag. If True, compute Mean Absolute Percentage Error instead of 
-                     absolute differences.
-    
-    Returns:
-        A list (or tensor) of best candidate match indices for each sample, of shape (S, N).  
-        Each row corresponds to the candidate match (from matches_M_N) that minimizes the DMAE 
-        for that sample.
-    """
-    # Ensure matches_M_N is a tensor on the same device as pos_pred_S_N_3.
-    matches_M_N = torch.tensor(matches_M_N, dtype=torch.long, device=pos_pred_S_N_3.device)
-    
-    # Candidate predicted positions indexing:
-    # For each sample (S) and each candidate match (M), select positions for N atoms.
-    candidate_pred_pos_S_M_N_3 = pos_pred_S_N_3[:, matches_M_N]
-    
-    S, M, N, _ = candidate_pred_pos_S_M_N_3.shape
-    
-    # Flatten the first two dimensions (S and M) for batch distance computation.
-    candidate_pred_pos_SM_N_3 = candidate_pred_pos_S_M_N_3.reshape(S * M, N, 3)
-    
-    # Compute pairwise distance matrices for each candidate match.
-    d_matches_SM_N_N = torch.cdist(candidate_pred_pos_SM_N_3, candidate_pred_pos_SM_N_3, p=2)    
-    d_matches_S_M_N_N = d_matches_SM_N_N.reshape(S, M, N, N)
-    
-    # Compute the reference distance matrix from pos_gt_N_3
-    d_ref_N_N = torch.cdist(pos_gt_N_3.unsqueeze(0), pos_gt_N_3.unsqueeze(0), p=2).squeeze(0)
-    d_ref_1_1_N_N = d_ref_N_N.unsqueeze(0).unsqueeze(0)
-    
-    # Compute the error difference.
-    if mape:
-        diff_S_M_N_N = torch.abs(d_ref_1_1_N_N - d_matches_S_M_N_N) / d_ref_1_1_N_N
-    else:
-        diff_S_M_N_N = torch.abs(d_ref_1_1_N_N - d_matches_S_M_N_N)
-    
-    # Zero out the lower triangle (and diagonal) of each (N, N) distance matrix.
-    diff_upper_S_M_N_N = torch.triu(diff_S_M_N_N, diagonal=1)
-    
-    # Calculate DMAE for each candidate match in each sample.
-    # Normalization factor: (N*(N-1)/2) with a factor of 2 gives division by (N*(N-1))
-    dmaes_S_M = 2 * diff_upper_S_M_N_N.sum(dim=(-1, -2)) / (N * (N - 1))  # Shape: (S, M)
-    
-    # For each sample, identify the candidate match with the smallest DMAE.
-    best_idx_S = torch.argmin(dmaes_S_M, dim=1)  # Shape: (S,)
-    
-    # Retrieve the best candidate match indices for each sample.
-    best_matches_S_N = matches_M_N[best_idx_S]
-    
-    return best_matches_S_N
+def gen_rdkit_2dconformer(smile):
+    mol = Chem.MolFromSmarts(smile)
+    mol.Compute2DCoords()
+    pos = mol.GetConformer().GetPositions()
+    return pos
+
+
+def gen_rdkit_conformer(smile):
+    mol = Chem.MolFromSmarts(smile)
+    AllChem.EmbedMolecule(mol)
+    AllChem.UFFOptimizeMolecule(mol)
+    pos = mol.GetConformer().getPositions()
+    return pos
