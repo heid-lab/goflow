@@ -2,8 +2,6 @@ import torch
 from torch import Tensor
 import numpy as np
 
-from ase.calculators.lj import LennardJones
-from ase.calculators.emt import EMT
 from ase import Atoms
 
 from rdkit import Chem
