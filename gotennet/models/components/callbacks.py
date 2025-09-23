@@ -1,3 +1,5 @@
+"""Callbacks for the GotenNet model."""
+from random import random
 import time
 import math
 import pickle
@@ -8,15 +10,19 @@ import pandas as pd
 import lightning.pytorch as L
 import torch
 from lightning import Trainer
+from torch import Tensor
 from torch_geometric.data import Data
 
-from flow_matching.utils import rmsd_loss, compute_steric_clash_penalty, pred_atom_index_align, calc_DMAE, pred_atom_index_align_mad
+#from flow_matching.flow_module import FlowModule
+from flow_matching.utils import rmsd_loss, compute_steric_clash_penalty, pred_atom_index_align, calc_DMAE, pred_atom_index_align_mad, match_and_compute_rmsd
 from gotennet.utils import RankedLogger
+import numpy as np
+import rdkit.Chem as Chem
 from scipy.spatial.distance import cdist
 
 import itertools
 from collections import defaultdict
-
+import random
 
 log = RankedLogger(__name__, rank_zero_only=True)
 
@@ -63,7 +69,7 @@ def extract_angles_from_connectivity(connectivity: dict) -> torch.Tensor:
     for j, neighbors in connectivity.items():
         if len(neighbors) < 2:
             continue
-        # generate all unique pairs
+        # Use combinations to generate all unique pairs
         for i, k in itertools.combinations(neighbors, 2):
             angles.append([i, j, k])
     if angles:
@@ -111,7 +117,7 @@ def compute_bond_angles(
     Compute the bond angles for a set of triplets. Each triplet is assumed
     to be (i, j, k) with j as the vertex. The bond angle is computed as
 
-        theta = arccos [ (vec1 · vec2) / (||vec1|| ||vec2||) ]
+        θ = arccos [ (vec1 · vec2) / (||vec1|| ||vec2||) ]
 
     Parameters:
         coords_N_3 (torch.Tensor): Tensor of shape (N,3) with 3D positions.
@@ -187,12 +193,17 @@ def evaluate_geometry(
     Returns:
     Dict[str, float]
     """
-    # RMSE error
-    pred_pos_N_3, gt_pos_N_3 = pred_atom_index_align(data.smiles, data.pos[:, 1, :], data.pos_gen[-1])
-    rmse = rmsd_loss(pred_pos_N_3, gt_pos_N_3)
+    rtsp_i = 1
+    
+    # RMSE error    
+    #rmse = rmsd_loss(pred_pos_N_3, gt_pos_N_3) # GoFlow Original
+    rmse = match_and_compute_rmsd(data, rtsp_i)
+
     # MAE error
-    pred_pos_aligned_mae = pred_atom_index_align_mad(data.smiles, data.pos[:, 1, :], data.pos_gen[-1])
+    pred_pos_N_3, gt_pos_N_3 = pred_atom_index_align(data.smiles, data.pos[:, rtsp_i, :], data.pos_gen[-1])
+    pred_pos_aligned_mae = pred_atom_index_align_mad(data.smiles, data.pos[:, rtsp_i, :], data.pos_gen[-1])
     mae = calc_DMAE(cdist(gt_pos_N_3, gt_pos_N_3), cdist(pred_pos_aligned_mae, pred_pos_aligned_mae))
+    #mae_raw = calc_DMAE(cdist(data.pos[:, rtsp_i, :], data.pos[:, rtsp_i, :]), cdist(data.pos_gen[-1], data.pos_gen[-1]))
 
     connectivity = build_connectivity(data.edge_index)
     # Extract angle and dihedral indices from the connectivity.
@@ -233,6 +244,7 @@ def evaluate_geometry(
 class TestAndSaveResultsAfterTrainingCallback(L.Callback):
     def __init__(self, save_path, runs_stats_path=None):#, mr_stats_path=None):
         self.save_path = Path(save_path)
+        #self.mr_stats_path = None if mr_stats_path is None else Path(mr_stats_path)
         self.runs_stats_path = Path(runs_stats_path)
         self._test_start_time = None
 
@@ -261,16 +273,9 @@ class TestAndSaveResultsAfterTrainingCallback(L.Callback):
     
     def on_test_end(self, trainer: Trainer, module):
         inference_time_per_rxn = (time.perf_counter() - self._test_start_time) / len(module.results_R)
-        self._test_start_time = None
-        
-        pd_results_R = [evaluate_geometry(data) for data in module.results_R]
-        pd_results_df = pd.DataFrame(pd_results_R)
-        pd_results_df.to_csv(self.save_path / 'test_results.csv', index=False, float_format='%.3f')
+        for data in module.results_R:
+            data.avg_inference_time = inference_time_per_rxn
 
-        means = pd_results_df.mean()
-        means['time'] = inference_time_per_rxn
-
-        self.save_stats_to_csv(means, module)
         self.save_test_predictions(module)
 
 
