@@ -9,7 +9,7 @@ from rdkit.Chem import rdDetermineBonds
 from rdkit.Geometry import Point3D
 from torch_geometric.data import Data
 
-from flow_matching.chirality_forces import get_pseudoforces_batch
+# from flow_matching.chirality_forces import get_pseudoforces_batch
 from scipy.spatial.distance import cdist
 
 from rdkit.Chem import AllChem
@@ -409,6 +409,68 @@ def calc_DMAE_torch(dm_ref, dm_guess, mape=False):
     diff_upper = torch.triu(diff, diagonal=1)
     N = dm_ref.shape[0]
     return 2 * diff_upper.sum() / (N * (N - 1))
+
+
+def get_min_dmae_match_torch_batch(matches_M_N, pos_gt_N_3, pos_pred_S_N_3, mape=False):
+    """
+    Given a set of matches (each a tuple of indices), ground-truth positions (pos_gt_N_3),
+    and S samples of predicted positions (pos_pred_S_N_3), compute the DMAE for each match
+    in each sample and return the match (as a list) with the minimal DMAE per sample.
+
+    Args:
+        matches_M_N: list or tensor of candidate matches of shape (M, N)
+                     where M is the number of candidate matches and N is the number of atoms.
+        pos_gt_N_3:  tensor of ground-truth atom positions of shape (N, 3).
+        pos_pred_S_N_3: tensor of predicted atom positions for S samples (shape: S, N_total, 3)
+                        where N_total must be large enough to index by matches_M_N.
+        mape:        Boolean flag. If True, compute Mean Absolute Percentage Error instead of
+                     absolute differences.
+
+    Returns:
+        A list (or tensor) of best candidate match indices for each sample, of shape (S, N).
+        Each row corresponds to the candidate match (from matches_M_N) that minimizes the DMAE
+        for that sample.
+    """
+    # Ensure matches_M_N is a tensor on the same device as pos_pred_S_N_3.
+    matches_M_N = torch.tensor(matches_M_N, dtype=torch.long, device=pos_pred_S_N_3.device)
+
+    # Candidate predicted positions indexing:
+    # For each sample (S) and each candidate match (M), select positions for N atoms.
+    candidate_pred_pos_S_M_N_3 = pos_pred_S_N_3[:, matches_M_N]
+
+    S, M, N, _ = candidate_pred_pos_S_M_N_3.shape
+
+    # Flatten the first two dimensions (S and M) for batch distance computation.
+    candidate_pred_pos_SM_N_3 = candidate_pred_pos_S_M_N_3.reshape(S * M, N, 3)
+
+    # Compute pairwise distance matrices for each candidate match.
+    d_matches_SM_N_N = torch.cdist(candidate_pred_pos_SM_N_3, candidate_pred_pos_SM_N_3, p=2)
+    d_matches_S_M_N_N = d_matches_SM_N_N.reshape(S, M, N, N)
+
+    # Compute the reference distance matrix from pos_gt_N_3
+    d_ref_N_N = torch.cdist(pos_gt_N_3.unsqueeze(0), pos_gt_N_3.unsqueeze(0), p=2).squeeze(0)
+    d_ref_1_1_N_N = d_ref_N_N.unsqueeze(0).unsqueeze(0)
+
+    # Compute the error difference.
+    if mape:
+        diff_S_M_N_N = torch.abs(d_ref_1_1_N_N - d_matches_S_M_N_N) / d_ref_1_1_N_N
+    else:
+        diff_S_M_N_N = torch.abs(d_ref_1_1_N_N - d_matches_S_M_N_N)
+
+    # Zero out the lower triangle (and diagonal) of each (N, N) distance matrix.
+    diff_upper_S_M_N_N = torch.triu(diff_S_M_N_N, diagonal=1)
+
+    # Calculate DMAE for each candidate match in each sample.
+    # Normalization factor: (N*(N-1)/2) with a factor of 2 gives division by (N*(N-1))
+    dmaes_S_M = 2 * diff_upper_S_M_N_N.sum(dim=(-1, -2)) / (N * (N - 1))  # Shape: (S, M)
+
+    # For each sample, identify the candidate match with the smallest DMAE.
+    best_idx_S = torch.argmin(dmaes_S_M, dim=1)  # Shape: (S,)
+
+    # Retrieve the best candidate match indices for each sample.
+    best_matches_S_N = matches_M_N[best_idx_S]
+
+    return best_matches_S_N
 
 
 def gen_rdkit_2dconformer(smile):
