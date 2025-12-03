@@ -3,6 +3,10 @@
 GoFlow is an open-source model for predicting transition state geometries of single-step organic reactions.
 This repository contains the official implementation, including all scripts to fully reproduce the results reported in the paper.
 
+## Notice
+
+We released a lean version of GoFlow, which includes performance improvements and a simplified codebase. To use GoFlow in your work, we recommend using [GoFlow Lean](https://github.com/heid-lab/goflow_lean).
+
 ## Installation
 Install GoFlow dependencies with uv (recommended):
 
